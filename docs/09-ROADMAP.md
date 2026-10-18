@@ -36,26 +36,26 @@ Cakupan: auth, campaign, Paillier, circuit dan Groth16, smart contract, API dona
 
 ## Phase 4 — Penguatan protokol kriptografi
 
-**Status:** penelitian lanjutan.
+**Status:** selesai dirumuskan dan dievaluasi.
 
 - [x] Definisikan threat model dan properti privasi. (lihat docs/12-THREAT-MODEL-DAN-PRIVASI.md)
-- [ ] Desain proof-to-ciphertext binding.
-- [ ] Evaluasi client-side encryption dan pengelolaan randomness.
-- [ ] Benchmark proof generation/verification serta Paillier.
-- [ ] Tinjau keamanan kunci dan trusted setup.
+- [x] Desain proof-to-ciphertext binding. (lihat docs/13-PROOF-TO-CIPHERTEXT-BINDING.md)
+- [x] Evaluasi client-side encryption dan pengelolaan randomness. (lihat docs/14-EVALUASI-CLIENT-SIDE-ENKRIPSI.md)
+- [x] Benchmark proof generation/verification serta Paillier. (lihat docs/15-BENCHMARK-KRIPTOGRAFI.md)
+- [x] Tinjau keamanan kunci dan trusted setup. (lihat docs/16-TINJAUAN-KEAMANAN-KUNCI-DAN-TRUSTED-SETUP.md)
 
 **Exit criteria:** klaim kriptografi dibuktikan melalui desain, test, dan evaluasi yang dapat direproduksi.
 
 ## Phase 5 — Pengujian dan staging
 
-**Status:** direncanakan.
+**Status:** dalam pengerjaan.
 
-- [ ] Integration/E2E/security tests.
-- [ ] Observability, backup, recovery, staging.
-- [ ] Evaluasi correctness, privacy, performance, reliability.
+- [x] Integration/E2E/security tests. (lihat docs/17-RENCANA-PENGUJIAN-DAN-SECURITY-TESTS.md dan backend/internal/donation/security_test.go)
+- [x] Observability, backup, recovery, staging. (lihat docs/18-OBSERVABILITY-BACKUP-RECOVERY-STAGING.md)
+- [x] Evaluasi correctness, privacy, performance, reliability. (lihat docs/19-EVALUASI-SISTEM-4-PILAR.md)
 - [ ] Dokumentasi hasil eksperimen dan keterbatasan.
 
 ## Next step langsung
 
-Item threat model dan properti privasi selesai didokumentasikan di `docs/12-THREAT-MODEL-DAN-PRIVASI.md`. Langkah selanjutnya adalah Phase 4 item kedua: **Desain proof-to-ciphertext binding**.
+Evaluasi menyeluruh 4 pilar sistem (correctness, privacy, performance, reliability) telah dibukukan di `docs/19-EVALUASI-SISTEM-4-PILAR.md`. Langkah terakhir adalah item penutup Phase 5: **Dokumentasi hasil eksperimen dan keterbatasan**.
 

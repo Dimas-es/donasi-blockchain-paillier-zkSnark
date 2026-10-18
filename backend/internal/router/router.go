@@ -6,13 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/jackc/pgx/v5/pgxpool"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/auth"
-	"github.com/izagoto/zk-paillier-donation-system/internal/blockchain"
-	"github.com/izagoto/zk-paillier-donation-system/internal/campaign"
-	"github.com/izagoto/zk-paillier-donation-system/internal/crypto/paillier"
-	"github.com/izagoto/zk-paillier-donation-system/internal/donation"
-	"github.com/izagoto/zk-paillier-donation-system/internal/middleware"
-	"github.com/izagoto/zk-paillier-donation-system/internal/zk"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/auth"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/blockchain"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/campaign"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/crypto/paillier"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/donation"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/middleware"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/zk"
 )
 
 func Setup(

@@ -8,9 +8,9 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/config"
-	"github.com/izagoto/zk-paillier-donation-system/internal/crypto/paillier"
-	"github.com/izagoto/zk-paillier-donation-system/internal/database"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/config"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/crypto/paillier"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/database"
 )
 
 type CampaignInfo struct {

@@ -11,10 +11,10 @@ import (
 	"github.com/google/uuid"
 	"github.com/jackc/pgx/v5"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/blockchain"
-	"github.com/izagoto/zk-paillier-donation-system/internal/campaign"
-	"github.com/izagoto/zk-paillier-donation-system/internal/crypto/paillier"
-	"github.com/izagoto/zk-paillier-donation-system/internal/zk"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/blockchain"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/campaign"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/crypto/paillier"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/zk"
 )
 
 var (

@@ -4,7 +4,7 @@
 
 > **Status:** penelitian / demo lokal (backend + frontend MVP). **Bukan layanan keuangan produksi.** Backend masih melihat nominal donasi dalam plaintext; proof zk **belum** mengikat ciphertext Paillier.
 
-**Repository:** https://github.com/izagoto/zk-paillier-donation-system
+**Repository:** https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark
 
 ## Gambaran singkat
 

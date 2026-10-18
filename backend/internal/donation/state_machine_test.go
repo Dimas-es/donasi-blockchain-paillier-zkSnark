@@ -3,43 +3,15 @@ package donation
 import (
 	"context"
 	"math/big"
-	"os"
 	"sync"
 	"testing"
 
 	"github.com/google/uuid"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/config"
-	"github.com/izagoto/zk-paillier-donation-system/internal/crypto/paillier"
-	"github.com/izagoto/zk-paillier-donation-system/internal/database"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/config"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/crypto/paillier"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/database"
 )
-
-func getTestDB(t *testing.T) *databasePoolWrapper {
-	dbURL := os.Getenv("DATABASE_URL")
-	if dbURL == "" {
-		cfg, err := config.Load()
-		if err == nil && cfg.DatabaseURL != "" {
-			dbURL = cfg.DatabaseURL
-		}
-	}
-
-	if dbURL == "" {
-		t.Skip("skipping database test: DATABASE_URL not set")
-	}
-
-	pool, err := database.NewPool(dbURL)
-	if err != nil {
-		t.Skipf("skipping database test: failed to connect to database: %v", err)
-	}
-
-	return &databasePoolWrapper{pool: pool}
-}
-
-type databasePoolWrapper struct {
-	pool interface {
-		Close()
-	}
-}
 
 func TestGuardedStateTransitions(t *testing.T) {
 	cfg, err := config.Load()

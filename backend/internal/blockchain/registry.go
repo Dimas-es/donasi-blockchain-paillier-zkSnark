@@ -10,7 +10,7 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/zk"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/zk"
 )
 
 type Registry struct {
@@ -307,10 +307,6 @@ func (r *Registry) RecordDonation(
 	}
 
 	return txHash, nil
-}
-
-func donationIDToBigInt(id uint64) *big.Int {
-	return new(big.Int).SetUint64(id)
 }
 
 func (r *Registry) SetCampaignMaxDonation(

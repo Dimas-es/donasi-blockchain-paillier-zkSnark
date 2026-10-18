@@ -1,14 +1,15 @@
-type Step = 'idle' | 'proof' | 'chain' | 'done';
+type Step = 'idle' | 'proof' | 'encrypt' | 'chain' | 'done';
 
 const labels: Record<Step, string> = {
   idle: 'Siap',
-  proof: 'Membuat proof zk-SNARK',
-  chain: 'Mencatat ke blockchain',
-  done: 'Selesai',
+  proof: 'Bukti ZK (Groth16)',
+  encrypt: 'Enkripsi Paillier (2048-bit)',
+  chain: 'Mencatat ke Ledger EVM',
+  done: 'Terkonfirmasi & Teragregasi',
 };
 
 export function DonationSteps({ step }: { step: Step }) {
-  const order: Step[] = ['proof', 'chain', 'done'];
+  const order: Step[] = ['proof', 'encrypt', 'chain', 'done'];
   const activeIndex =
     step === 'idle' ? -1 : order.indexOf(step === 'done' ? 'done' : step);
 

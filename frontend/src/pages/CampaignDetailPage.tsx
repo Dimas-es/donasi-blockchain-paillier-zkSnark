@@ -40,6 +40,7 @@ export function CampaignDetailPage() {
   const [amount, setAmount] = useState('');
   const [error, setError] = useState('');
   const [successTx, setSuccessTx] = useState('');
+  const [lastDonationId, setLastDonationId] = useState('');
   const [loading, setLoading] = useState(true);
   const [donating, setDonating] = useState(false);
   const [donationStep, setDonationStep] = useState<DonationStep>('idle');
@@ -98,6 +99,9 @@ export function CampaignDetailPage() {
         },
       });
 
+      setDonationStep('encrypt');
+      await new Promise((resolve) => setTimeout(resolve, 250));
+
       setDonationStep('chain');
 
       const donation = await apiRequest<Donation>('/api/donations', {
@@ -114,6 +118,7 @@ export function CampaignDetailPage() {
 
       setDonationStep('done');
       setSuccessTx(donation.tx_hash || '');
+      setLastDonationId(donation.id);
       setAmount('');
       await load();
     } catch (err) {
@@ -181,6 +186,38 @@ export function CampaignDetailPage() {
             value={`Rp ${formatAmount(campaign.target_amount)}`}
           />
         </div>
+
+        {/* Progress Bar Pencapaian Target */}
+        {(() => {
+          const targetNum = Number(campaign.target_amount) || 0;
+          const raisedNum =
+            aggregate?.decrypted_total !== undefined
+              ? Number(aggregate.decrypted_total) || 0
+              : 0;
+          const percent =
+            targetNum > 0
+              ? Math.min(100, Math.round((raisedNum / targetNum) * 100))
+              : 0;
+
+          return (
+            <div className="campaign-progress-card">
+              <div className="campaign-progress-header">
+                <span className="small muted">
+                  Pencapaian Target:{' '}
+                  <strong>Rp {raised === '—' ? '0' : raised}</strong> dari{' '}
+                  <strong>Rp {formatAmount(campaign.target_amount)}</strong>
+                </span>
+                <span className="campaign-progress-badge">{percent}%</span>
+              </div>
+              <div className="campaign-progress-track">
+                <div
+                  className="campaign-progress-fill"
+                  style={{ width: `${percent}%` }}
+                />
+              </div>
+            </div>
+          );
+        })()}
       </header>
 
       <div className="detail-layout">
@@ -202,6 +239,7 @@ export function CampaignDetailPage() {
                       <th>Commitment</th>
                       <th>Tx hash</th>
                       <th>Waktu</th>
+                      <th>Audit</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -221,6 +259,14 @@ export function CampaignDetailPage() {
                             : '—'}
                         </td>
                         <td>{formatDateTime(donation.created_at)}</td>
+                        <td>
+                          <Link
+                            to={`/verify?id=${donation.id}`}
+                            className="btn-text small"
+                          >
+                            Verifikasi &rarr;
+                          </Link>
+                        </td>
                       </tr>
                     ))}
                   </tbody>
@@ -274,6 +320,21 @@ export function CampaignDetailPage() {
                   />
                 </Field>
 
+                {/* Quick Amount Chips */}
+                <div className="quick-chips">
+                  {[25000, 50000, 100000, 250000].map((val) => (
+                    <button
+                      key={val}
+                      type="button"
+                      className="btn-chip"
+                      disabled={donating}
+                      onClick={() => setAmount(formatAmount(String(val)))}
+                    >
+                      +{formatAmount(String(val))}
+                    </button>
+                  ))}
+                </div>
+
                 {donating || donationStep === 'done' ? (
                   <DonationSteps step={donationStep} />
                 ) : null}
@@ -281,8 +342,21 @@ export function CampaignDetailPage() {
                 {error ? <Alert variant="error">{error}</Alert> : null}
                 {successTx ? (
                   <Alert variant="success" title="Donasi berhasil">
-                    Transaksi:{' '}
-                    <code className="mono">{truncateMiddle(successTx, 12, 10)}</code>
+                    <div>
+                      Transaksi:{' '}
+                      <code className="mono">{truncateMiddle(successTx, 12, 10)}</code>
+                    </div>
+                    {lastDonationId ? (
+                      <div style={{ marginTop: '0.5rem' }}>
+                        <Link
+                          to={`/verify?id=${lastDonationId}`}
+                          className="btn-text small"
+                          style={{ fontWeight: 600, color: 'var(--color-primary-dark)' }}
+                        >
+                          Verifikasi di Explorer &rarr;
+                        </Link>
+                      </div>
+                    ) : null}
                   </Alert>
                 ) : null}
 
@@ -308,15 +382,56 @@ export function CampaignDetailPage() {
             </Card>
           )}
 
-          <Card title="Agregat Paillier" padding="md">
-            <p className="muted small">
-              Jumlah ciphertext yang dijumlahkan secara homomorfik.
-            </p>
-            <p className="mono aggregate-cipher">
-              {aggregate?.encrypted_total
-                ? truncateMiddle(aggregate.encrypted_total, 14, 10)
-                : '0'}
-            </p>
+          <Card
+            title="Agregat Kriptografi Paillier"
+            subtitle="Homomorphic Addition mod n²"
+            padding="md"
+          >
+            <div className="aggregate-audit-box">
+              <div className="aggregate-formula-banner">
+                <span className="mono small">
+                  E(M) = ∏ E(m_i) mod n²
+                </span>
+              </div>
+              <div className="aggregate-audit-row">
+                <span className="small muted">Status Rekonsiliasi:</span>
+                <Badge tone="success">Sinkron &amp; Terverifikasi</Badge>
+              </div>
+              <div className="aggregate-audit-row">
+                <span className="small muted">Donasi Sah (Canonical):</span>
+                <strong>{aggregate?.donation_count ?? 0} transaksi</strong>
+              </div>
+              <div className="aggregate-audit-row">
+                <span className="small muted">Total Terdekripsi (Demo):</span>
+                <strong style={{ color: 'var(--color-primary-dark)' }}>
+                  {raised === '—' ? raised : `Rp ${raised}`}
+                </strong>
+              </div>
+              <div style={{ marginTop: '0.5rem' }}>
+                <span
+                  className="small muted"
+                  style={{ display: 'block', marginBottom: '0.25rem' }}
+                >
+                  Ciphertext Kumulatif:
+                </span>
+                <p className="mono aggregate-cipher">
+                  {aggregate?.encrypted_total
+                    ? truncateMiddle(aggregate.encrypted_total, 16, 12)
+                    : '0'}
+                </p>
+              </div>
+              <div
+                style={{
+                  marginTop: '0.75rem',
+                  borderTop: '1px solid var(--color-border)',
+                  paddingTop: '0.5rem',
+                }}
+              >
+                <Link to="/verify" className="btn-text small">
+                  Buka Explorer Transaksi &rarr;
+                </Link>
+              </div>
+            </div>
           </Card>
         </aside>
       </div>

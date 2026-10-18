@@ -31,40 +31,45 @@ export function LoginPage() {
 
   return (
     <AuthLayout
-      title="Masuk ke akun Anda"
-      subtitle="Kelola campaign dan kirim donasi dengan bukti kriptografis."
+      title="Masuk ke Sistem"
+      subtitle="Akses akun pengujian dan pengelolaan donasi."
       footer={
-        <p>
-          Akun demo disediakan untuk keperluan penelitian. Hubungi pengelola
-          sistem jika belum memiliki kredensial.
+        <p className="auth-footer-text">
+          Platform ini dikembangkan khusus untuk keperluan riset akademik dan pengujian keamanan privasi donatur.
         </p>
       }
     >
       <form className="form-stack" onSubmit={onSubmit}>
-        <Field label="Email">
+        <Field label="Alamat Email">
           <Input
             type="email"
             autoComplete="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="nama@email.com"
+            placeholder="pengelola@demo.local"
             required
           />
         </Field>
-        <Field label="Password">
+        <Field label="Kata Sandi">
           <Input
             type="password"
             autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="••••••••"
             required
           />
         </Field>
-        {error ? (
-          <Alert variant="error">{error}</Alert>
-        ) : null}
-        <Button type="submit" loading={loading} className="btn--block">
-          Masuk
+
+        {error ? <Alert variant="error">{error}</Alert> : null}
+
+        <Button
+          type="submit"
+          loading={loading}
+          className="btn--block btn--auth-submit"
+          style={{ marginTop: '1rem' }}
+        >
+          {loading ? 'Memverifikasi...' : 'Masuk'}
         </Button>
       </form>
     </AuthLayout>

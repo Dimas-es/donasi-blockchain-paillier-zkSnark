@@ -7,6 +7,7 @@ import { CampaignListPage } from './pages/CampaignListPage';
 import { CreateCampaignPage } from './pages/CreateCampaignPage';
 import { HomePage } from './pages/HomePage';
 import { LoginPage } from './pages/LoginPage';
+import { VerifyPage } from './pages/VerifyPage';
 
 function Protected({ children }: { children: React.ReactNode }) {
   const { user, loading } = useAuth();
@@ -39,6 +40,7 @@ function AppRoutes() {
           }
         />
         <Route path="/campaigns/:id" element={<CampaignDetailPage />} />
+        <Route path="/verify" element={<VerifyPage />} />
       </Route>
     </Routes>
   );

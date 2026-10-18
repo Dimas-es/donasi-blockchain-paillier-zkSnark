@@ -25,6 +25,9 @@ export function Layout() {
             <NavLink to="/campaigns" className="nav__link">
               Campaign
             </NavLink>
+            <NavLink to="/verify" className="nav__link">
+              Explorer
+            </NavLink>
             {user ? (
               <NavLink to="/campaigns/new" className="nav__link">
                 Buat Campaign

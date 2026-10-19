@@ -101,7 +101,7 @@ export function CreateCampaignPage() {
             <Link to="/campaigns" className="link-btn link-btn--ghost">
               Batal
             </Link>
-            <Button type="submit" loading={loading}>
+            <Button type="submit" loading={loading} className="btn--action-submit" style={{ padding: '0 1.5rem' }}>
               Publikasikan campaign
             </Button>
           </div>

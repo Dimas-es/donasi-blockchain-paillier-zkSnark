@@ -17,7 +17,6 @@ import { Button } from '../components/ui/Button';
 import { Card } from '../components/ui/Card';
 import { Field, Input } from '../components/ui/Field';
 import { Spinner } from '../components/ui/Spinner';
-import { Stat } from '../components/ui/Stat';
 import { useAuth } from '../context/AuthContext';
 import {
   formatAmount,
@@ -171,49 +170,58 @@ export function CampaignDetailPage() {
             {campaign.description || 'Tidak ada deskripsi.'}
           </p>
         </div>
-        <div className="detail-hero__stats">
-          <Stat
-            label="Terkumpul (demo)"
-            value={raised === '—' ? raised : `Rp ${raised}`}
-            hint="Dekripsi aggregate Paillier di server penelitian"
-          />
-          <Stat
-            label="Donasi confirmed"
-            value={String(aggregate?.donation_count ?? 0)}
-          />
-          <Stat
-            label="Target"
-            value={`Rp ${formatAmount(campaign.target_amount)}`}
-          />
-        </div>
-
-        {/* Progress Bar Pencapaian Target */}
+        {/* Panel Ringkasan Metrik & Progress Terpadu */}
         {(() => {
           const targetNum = Number(campaign.target_amount) || 0;
           const raisedNum =
             aggregate?.decrypted_total !== undefined
               ? Number(aggregate.decrypted_total) || 0
               : 0;
-          const percent =
-            targetNum > 0
-              ? Math.min(100, Math.round((raisedNum / targetNum) * 100))
-              : 0;
+          const rawPercent = targetNum > 0 ? (raisedNum / targetNum) * 100 : 0;
+          const percentDisplay =
+            rawPercent === 0
+              ? '0%'
+              : rawPercent < 1
+                ? `${rawPercent.toFixed(2)}%`
+                : `${Math.round(rawPercent)}%`;
+
+          const progressFillWidth =
+            rawPercent === 0
+              ? '0%'
+              : `${Math.max(1.5, Math.min(100, rawPercent))}%`;
 
           return (
-            <div className="campaign-progress-card">
-              <div className="campaign-progress-header">
-                <span className="small muted">
-                  Pencapaian Target:{' '}
-                  <strong>Rp {raised === '—' ? '0' : raised}</strong> dari{' '}
-                  <strong>Rp {formatAmount(campaign.target_amount)}</strong>
-                </span>
-                <span className="campaign-progress-badge">{percent}%</span>
+            <div className="campaign-metrics-panel">
+              <div className="campaign-metrics-grid">
+                <div className="metric-item">
+                  <span className="metric-label">Terkumpul (Agregat Demo)</span>
+                  <span className="metric-value">{raised === '—' ? raised : `Rp ${raised}`}</span>
+                  <span className="metric-hint">Dekripsi Paillier server penelitian</span>
+                </div>
+                <div className="metric-item">
+                  <span className="metric-label">Target Donasi</span>
+                  <span className="metric-value">Rp {formatAmount(campaign.target_amount)}</span>
+                </div>
+                <div className="metric-item">
+                  <span className="metric-label">Donasi Tervalidasi</span>
+                  <span className="metric-value">{String(aggregate?.donation_count ?? 0)}</span>
+                  <span className="metric-hint">Confirmed on-chain</span>
+                </div>
               </div>
-              <div className="campaign-progress-track">
-                <div
-                  className="campaign-progress-fill"
-                  style={{ width: `${percent}%` }}
-                />
+
+              <div className="campaign-metrics-progress">
+                <div className="campaign-metrics-progress-info">
+                  <span className="small muted">
+                    Pencapaian: <strong>{percentDisplay}</strong> dari target
+                  </span>
+                  <span className="campaign-progress-badge">{percentDisplay}</span>
+                </div>
+                <div className="campaign-progress-track">
+                  <div
+                    className="campaign-progress-fill"
+                    style={{ width: progressFillWidth }}
+                  />
+                </div>
               </div>
             </div>
           );
@@ -351,7 +359,7 @@ export function CampaignDetailPage() {
                         <Link
                           to={`/verify?id=${lastDonationId}`}
                           className="btn-text small"
-                          style={{ fontWeight: 600, color: 'var(--color-primary-dark)' }}
+                          style={{ fontWeight: 600, color: '#2563eb' }}
                         >
                           Verifikasi di Explorer &rarr;
                         </Link>
@@ -363,7 +371,7 @@ export function CampaignDetailPage() {
                 <Button
                   type="submit"
                   loading={donating}
-                  className="btn--block"
+                  className="btn--block btn--action-submit"
                 >
                   {donating ? 'Memproses...' : 'Kirim donasi'}
                 </Button>
@@ -403,7 +411,7 @@ export function CampaignDetailPage() {
               </div>
               <div className="aggregate-audit-row">
                 <span className="small muted">Total Terdekripsi (Demo):</span>
-                <strong style={{ color: 'var(--color-primary-dark)' }}>
+                <strong style={{ color: '#0f172a' }}>
                   {raised === '—' ? raised : `Rp ${raised}`}
                 </strong>
               </div>

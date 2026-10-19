@@ -17,57 +17,32 @@ export function HomePage() {
       .finally(() => setLoading(false));
   }, []);
 
-  const activeCount = campaigns.filter((c) => c.status === 'active').length;
-
   return (
     <div className="home">
-      <section className="hero">
-        <div className="hero__content">
-          <p className="hero__eyebrow">Prototipe penelitian · Demo lokal</p>
-          <h1 className="hero__title">
-            Donasi yang dapat diaudit, dengan privasi nominal terbatas
-          </h1>
-          <p className="hero__lead">
-            TrustGive menggabungkan pencatatan blockchain, enkripsi homomorfik
-            Paillier, dan bukti zk-SNARK agar setiap donasi tervalidasi tanpa
-            mempublikasikan nominal plaintext on-chain.
-          </p>
-          <div className="hero__actions">
-            <Link to="/campaigns" className="link-btn link-btn--primary link-btn--lg">
-              Jelajahi campaign
-            </Link>
-            {user ? (
-              <Link to="/campaigns/new" className="link-btn link-btn--ghost link-btn--lg">
-                Buat campaign baru
-              </Link>
-            ) : (
-              <Link to="/login" className="link-btn link-btn--ghost link-btn--lg">
-                Masuk untuk berdonasi
-              </Link>
-            )}
+      <section className="hero-editorial">
+        <div className="hero-editorial__inner">
+          <div className="hero-editorial__badges">
+            <span className="badge-chip">Blockchain</span>
+            <span className="badge-chip">Paillier</span>
+            <span className="badge-chip">zk-SNARK</span>
           </div>
-          <dl className="hero__stats">
-            <div>
-              <dt>Campaign terdaftar</dt>
-              <dd>{campaigns.length}</dd>
-            </div>
-            <div>
-              <dt>Sedang aktif</dt>
-              <dd>{activeCount}</dd>
-            </div>
-            <div>
-              <dt>Teknologi</dt>
-              <dd>Groth16 · EVM · Paillier</dd>
-            </div>
-          </dl>
-        </div>
-        <div className="hero__visual" aria-hidden>
-          <div className="hero__orb hero__orb--1" />
-          <div className="hero__orb hero__orb--2" />
-          <div className="hero__card-preview">
-            <span className="hero__card-label">Agregat terenkripsi</span>
-            <span className="hero__card-value">Σ E(amount)</span>
-            <span className="hero__card-sub">Homomorphic sum · Paillier</span>
+
+          <h1 className="hero-editorial__title">
+            Donasi Transparan, Privasi Terlindungi
+          </h1>
+
+          <p className="hero-editorial__lead">
+            Sistem donasi terverifikasi blockchain dengan enkripsi homomorfik Paillier dan pembuktian zk-SNARK Groth16.
+            Nominal donatur tetap rahasia, sementara total agregat dan validitas transaksi dapat diaudit publik secara on-chain.
+          </p>
+
+          <div className="hero-editorial__actions">
+            <Link to="/campaigns" className="btn-action btn-action--primary">
+              Jelajahi Campaign
+            </Link>
+            <Link to="/verify" className="btn-action btn-action--outline">
+              Buka Public Explorer
+            </Link>
           </div>
         </div>
       </section>

@@ -11,18 +11,14 @@ export function Layout() {
       <header className="topbar">
         <div className="topbar__inner">
           <Link to="/" className="brand">
-            <span className="brand__mark" aria-hidden />
-            <span className="brand__text">
-              <span className="brand__name">TrustGive</span>
-              <span className="brand__tag">ZK · Paillier · Blockchain</span>
-            </span>
+            <span className="brand__name">TrustGive</span>
           </Link>
 
           <nav className="nav" aria-label="Utama">
             <NavLink to="/" className="nav__link" end>
               Beranda
             </NavLink>
-            <NavLink to="/campaigns" className="nav__link">
+            <NavLink to="/campaigns" className="nav__link" end>
               Campaign
             </NavLink>
             <NavLink to="/verify" className="nav__link">

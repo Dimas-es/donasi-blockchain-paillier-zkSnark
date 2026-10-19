@@ -48,14 +48,15 @@ Cakupan: auth, campaign, Paillier, circuit dan Groth16, smart contract, API dona
 
 ## Phase 5 — Pengujian dan staging
 
-**Status:** dalam pengerjaan.
+**Status:** Selesai 100%.
 
 - [x] Integration/E2E/security tests. (lihat docs/17-RENCANA-PENGUJIAN-DAN-SECURITY-TESTS.md dan backend/internal/donation/security_test.go)
 - [x] Observability, backup, recovery, staging. (lihat docs/18-OBSERVABILITY-BACKUP-RECOVERY-STAGING.md)
 - [x] Evaluasi correctness, privacy, performance, reliability. (lihat docs/19-EVALUASI-SISTEM-4-PILAR.md)
-- [ ] Dokumentasi hasil eksperimen dan keterbatasan.
+- [x] Dokumentasi hasil eksperimen dan keterbatasan. (lihat docs/20-HASIL-EKSPERIMEN-DAN-KETERBATASAN.md)
 
-## Next step langsung
+## Status Keseluruhan Proyek
 
-Evaluasi menyeluruh 4 pilar sistem (correctness, privacy, performance, reliability) telah dibukukan di `docs/19-EVALUASI-SISTEM-4-PILAR.md`. Langkah terakhir adalah item penutup Phase 5: **Dokumentasi hasil eksperimen dan keterbatasan**.
+Seluruh tahapan pengembangan dari Phase 1 hingga Phase 5 telah selesai diimplementasikan, diverifikasi, dan didokumentasikan secara komprehensif, mencakup arsitektur backend, frontend MVP, protokol kriptografi (zk-SNARK & Paillier), smart contract, integritas data/reliability, serta evaluasi keterbatasan akademik.
+
 

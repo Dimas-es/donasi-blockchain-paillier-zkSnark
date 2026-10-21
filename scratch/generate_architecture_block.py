@@ -126,7 +126,7 @@ def generate_layered_block_architecture():
     c1_y = l1_y + 0.16
     draw_card(c1_x, c1_y, card1_w, card1_h, "Donatur (Web UI / dApp)", [
         "• Formulir donasi aman & pemilihan kampanye",
-        "• Enkripsi nilai donasi lokal di browser",
+        "• Pengiriman donasi & pendelegasian ZK",
         "• Penerimaan tanda terima & Idempotency Key"
     ])
 
@@ -186,7 +186,7 @@ def generate_layered_block_architecture():
     # Card 2.4: PostgreSQL Storage
     draw_card(col2_x, row_bot_y, card2_w, card2_h, "PostgreSQL Persistent Storage", [
         "• Penyimpanan Relasional ACID: Users, Campaigns, Donations",
-        "• Tabel Idempotency Keys: Hash request & status locking",
+        "• Kolom Idempotency Key berindeks unik parsial",
         "• Akumulasi Ciphertext donasi & jejak audit komprehensif",
         "• Log sinkronisasi on-chain & riwayat verifikasi transaksi"
     ])
@@ -220,7 +220,7 @@ def generate_layered_block_architecture():
         "• DonationRegistry.sol:",
         "   - Registrasi kampanye & batas maksimal",
         "   - Penyimpanan komitmen akumulasi saldo",
-        "   - Pencatatan hash donasi & idempotensi",
+        "   - Pencatatan komitmen donasi & verifikasi ZK",
         "• Groth16Verifier.sol:",
         "   - Verifikasi pairing curve alt_bn128",
         "   - Validasi batas tanpa membuka nilai donasi",

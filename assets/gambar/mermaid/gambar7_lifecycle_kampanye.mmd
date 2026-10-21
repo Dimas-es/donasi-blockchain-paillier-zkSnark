@@ -1,0 +1,14 @@
+stateDiagram-v2
+    [*] --> Inisialisasi : Inisiasi Kampanye oleh Penyelenggara
+    Inisialisasi --> Active : setCampaignMaxDonation() on-chain & simpan PostgreSQL
+    
+    state Active {
+        [*] --> MenerimaDonasi : Request donasi + Idempotency-Key
+        MenerimaDonasi --> DelegatedProver : Witness SnarkJS & Enkripsi Paillier
+        DelegatedProver --> VerifikasiOnChain : recordDonation() & pairing Groth16
+        VerifikasiOnChain --> AkumulasiHomomorfik : Perkalian modular c_agg mod n²
+        AkumulasiHomomorfik --> [*] : Konfirmasi status confirmed
+    }
+
+    Active --> Closed : Penutupan Kampanye oleh Penyelenggara / Admin
+    Closed --> [*] : Pencatatan donasi baru ditolak

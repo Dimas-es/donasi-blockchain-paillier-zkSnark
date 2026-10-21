@@ -1,0 +1,156 @@
+{
+  "metadata": {
+    "environment": {
+      "os": "Microsoft Windows 11 Pro 64-bit",
+      "cpu": "Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz (4 Cores, 8 Threads)",
+      "ram": "8 GB DDR4",
+      "go_version": "go1.27.1 windows/amd64",
+      "node_version": "v24.21.0",
+      "snarkjs_version": "^0.7.6",
+      "circom_version": "pragma circom 2.2.0",
+      "solidity_version": "^0.8.28",
+      "evm_environment": "Hardhat Local EVM (Cancun, 30M gas limit, 0 gwei basefee)"
+    },
+    "timestamp": "2026-10-21"
+  },
+  "crypto_operations": {
+    "KeyGen-512": {
+      "count": 50,
+      "mean_ms": 6.432,
+      "std_dev_ms": 2.884078449418462,
+      "min_ms": 0.0,
+      "max_ms": 12.9655
+    },
+    "KeyGen-2048": {
+      "count": 30,
+      "mean_ms": 278.22039,
+      "std_dev_ms": 117.1754454287881,
+      "min_ms": 74.2322,
+      "max_ms": 528.0055
+    },
+    "Encrypt-2048": {
+      "count": 100,
+      "mean_ms": 20.186468,
+      "std_dev_ms": 6.673633364815302,
+      "min_ms": 8.2435,
+      "max_ms": 54.0784
+    },
+    "Add-2048": {
+      "count": 100,
+      "mean_ms": 0.01264446,
+      "std_dev_ms": 0.004136058242868444,
+      "min_ms": 0.003579,
+      "max_ms": 0.024209
+    },
+    "Decrypt-2048": {
+      "count": 100,
+      "mean_ms": 17.957161,
+      "std_dev_ms": 3.9647414965895322,
+      "min_ms": 10.1365,
+      "max_ms": 29.4595
+    },
+    "fullprove_wasm_groth16": {
+      "count": 30,
+      "mean_ms": 212.18176666666665,
+      "std_dev_ms": 97.08548835810747,
+      "min_ms": 169.4775,
+      "max_ms": 722.6337
+    },
+    "verify_in_process_js": {
+      "count": 30,
+      "mean_ms": 19.84071333333333,
+      "std_dev_ms": 2.933934230543615,
+      "min_ms": 16.1871,
+      "max_ms": 32.0162
+    },
+    "verify_subprocess_npx": {
+      "count": 30,
+      "mean_ms": 1935.30387,
+      "std_dev_ms": 105.96883504294445,
+      "min_ms": 1784.2608,
+      "max_ms": 2185.5093
+    }
+  },
+  "gas_metrics": [
+    {
+      "operation": "Deploy Groth16Verifier",
+      "method": "Contract Creation",
+      "gas_used": 391827,
+      "gas_limit": 30000000,
+      "block_percentage": "1.31%",
+      "category": "Deployment"
+    },
+    {
+      "operation": "Deploy DonationRegistry",
+      "method": "Contract Creation",
+      "gas_used": 1240542,
+      "gas_limit": 30000000,
+      "block_percentage": "4.14%",
+      "category": "Deployment"
+    },
+    {
+      "operation": "setCampaignMaxDonation",
+      "method": "Function Call",
+      "gas_used": 45886,
+      "gas_limit": 30000000,
+      "block_percentage": "0.15%",
+      "category": "Configuration"
+    },
+    {
+      "operation": "verifyProof (Standalone)",
+      "method": "View Estimate",
+      "gas_used": 225035,
+      "gas_limit": 30000000,
+      "block_percentage": "0.75%",
+      "category": "Verification"
+    },
+    {
+      "operation": "recordDonation (Dummy 22B)",
+      "method": "Function Call",
+      "gas_used": 613583,
+      "gas_limit": 30000000,
+      "block_percentage": "2.05%",
+      "category": "Execution"
+    },
+    {
+      "operation": "recordDonation (Binary 512B)",
+      "method": "Function Call",
+      "gas_used": 959421,
+      "gas_limit": 30000000,
+      "block_percentage": "3.20%",
+      "category": "Execution"
+    },
+    {
+      "operation": "recordDonation (Decimal 1233B)",
+      "method": "Function Call",
+      "gas_used": 1481690,
+      "gas_limit": 30000000,
+      "block_percentage": "4.94%",
+      "category": "Execution (Current Backend)"
+    },
+    {
+      "operation": "recordDonationOptimized",
+      "method": "Projected Event-Log",
+      "gas_used": 270000,
+      "gas_limit": 30000000,
+      "block_percentage": "0.90%",
+      "category": "Projected Optimization"
+    },
+    {
+      "operation": "getDonation",
+      "method": "View Call",
+      "gas_used": 0,
+      "gas_limit": 30000000,
+      "block_percentage": "0.00%",
+      "category": "View"
+    },
+    {
+      "operation": "getDonationCount",
+      "method": "View Call",
+      "gas_used": 0,
+      "gas_limit": 30000000,
+      "block_percentage": "0.00%",
+      "category": "View"
+    }
+  ]
+}

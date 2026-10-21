@@ -1,0 +1,11 @@
+operation,method,gas_used,gas_limit,block_percentage,category
+Deploy Groth16Verifier,Contract Creation,391827,30000000,1.31%,Deployment
+Deploy DonationRegistry,Contract Creation,1240542,30000000,4.14%,Deployment
+setCampaignMaxDonation,Function Call,45886,30000000,0.15%,Configuration
+verifyProof (Standalone),View Estimate,225035,30000000,0.75%,Verification
+recordDonation (Dummy 22B),Function Call,613583,30000000,2.05%,Execution
+recordDonation (Binary 512B),Function Call,959421,30000000,3.20%,Execution
+recordDonation (Decimal 1233B),Function Call,1481690,30000000,4.94%,Execution (Current Backend)
+recordDonationOptimized,Projected Event-Log,270000,30000000,0.90%,Projected Optimization
+getDonation,View Call,0,30000000,0.00%,View
+getDonationCount,View Call,0,30000000,0.00%,View

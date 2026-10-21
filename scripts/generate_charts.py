@@ -2,7 +2,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 
-os.makedirs('assets/jurnal', exist_ok=True)
+os.makedirs('assets/gambar', exist_ok=True)
 
 # Set global styles for clean academic look
 plt.rcParams['font.sans-serif'] = 'Arial'
@@ -67,7 +67,7 @@ for bar, val in zip(bars, gas_values):
 
 ax.set_ylim(0, 1750)
 plt.tight_layout()
-gas_chart_path = 'assets/jurnal/grafik_konsumsi_gas.png'
+gas_chart_path = 'assets/gambar/grafik_konsumsi_gas.png'
 plt.savefig(gas_chart_path, dpi=300)
 plt.close()
 print(f'Saved: {gas_chart_path}')
@@ -137,7 +137,7 @@ ax2.legend(
 )
 
 plt.tight_layout()
-latency_chart_path = 'assets/jurnal/grafik_latensi_e2e.png'
+latency_chart_path = 'assets/gambar/grafik_latensi_e2e.png'
 plt.savefig(latency_chart_path, dpi=300, bbox_inches='tight')
 plt.close()
 print(f'Saved: {latency_chart_path}')

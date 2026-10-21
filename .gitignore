@@ -53,3 +53,17 @@ blockchain/typechain-types/
 # Editor / agent
 .cursor/
 .kilo/
+scratch/
+
+# Office / Temporary docx lock files
+~$*.docx
+~$*.doc
+test_*.docx
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs
+*.log

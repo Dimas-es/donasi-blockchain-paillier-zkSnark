@@ -4,7 +4,7 @@
 
 > **Status:** MVP demo sidang (backend + frontend TrustGive, reliability Phase 2). **Bukan layanan keuangan produksi.** Backend masih melihat nominal donasi dalam plaintext; proof zk **belum** mengikat ciphertext Paillier (Phase 4).
 
-**Repository:** https://github.com/izagoto/zk-paillier-donation-system
+**Repository:** https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark.git
 
 ## Gambaran singkat
 

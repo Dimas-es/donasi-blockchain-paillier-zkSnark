@@ -10,7 +10,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/crypto/paillier"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/crypto/paillier"
 )
 
 type StatResult struct {

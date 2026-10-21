@@ -9,7 +9,7 @@ import (
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/crypto"
 
-	"github.com/izagoto/zk-paillier-donation-system/internal/zk"
+	"github.com/Dimas-es/donasi-blockchain-paillier-zkSnark/internal/zk"
 )
 
 type Registry struct {

@@ -1,4 +1,4 @@
-module github.com/izagoto/zk-paillier-donation-system
+module github.com/Dimas-es/donasi-blockchain-paillier-zkSnark
 
 go 1.25.3
 

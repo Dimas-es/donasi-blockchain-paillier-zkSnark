@@ -616,8 +616,8 @@ def build_manuscript():
         "and Ethereum smart contracts. Individual donations are encrypted off-chain via Paillier and aggregated through modular multiplication, "
         "while range validity is verified on-chain via zero-knowledge proofs over the BN254 curve without exposing plaintext values. "
         "Empirical evaluations on the prototype show that standalone Groth16 verification consumes 225,035 gas, while on-chain recording under "
-        "the current decimal string payload consumes 1,481,690 gas (959,421 gas for binary and 613,607 gas for compact payloads, optimizable to "
-        "~270,000 gas via event logs). Off-chain addition takes 0.035 ms and proof generation requires 1.35 s, achieving a sequential end-to-end "
+        "the current decimal string payload consumes 1,481,690 gas (959,421 gas for binary and 613,583 gas for compact payloads, optimizable to "
+        "~270,000 gas via event logs). Off-chain addition takes 0.013 ms (~79,300 op/s) and proof generation requires 1.35 s, achieving a sequential end-to-end "
         "latency of ~3.45 s under a delegated honest-but-curious server model.",
         is_italic=True
     )
@@ -634,8 +634,8 @@ def build_manuscript():
         "zk-SNARK Groth16, dan kontrak pintar Ethereum. Nilai donasi dienkripsi secara off-chain dengan Paillier dan diakumulasikan melalui "
         "perkalian modular, sedangkan keabsahan nominal diverifikasi secara on-chain menggunakan bukti ZK pada kurva BN254 tanpa membocorkan "
         "nilai rahasia. Pengujian empiris pada prototipe menunjukkan verifikasi Groth16 mandiri mengonsumsi 225.035 gas, sedangkan pencatatan on-chain "
-        "dengan muatan string desimal saat ini memerlukan 1.481.690 gas (959.421 gas untuk muatan biner dan 613.607 gas untuk muatan ringkas, "
-        "dengan proyeksi ~270.000 gas via event log). Agregasi off-chain memerlukan 0,035 ms dan pembentukan bukti ZK 1,35 detik, menghasilkan "
+        "dengan muatan string desimal saat ini memerlukan 1.481.690 gas (959.421 gas untuk muatan biner dan 613.583 gas untuk muatan ringkas, "
+        "dengan proyeksi ~270.000 gas via event log). Agregasi off-chain memerlukan 0,013 ms (~79.300 op/detik) dan pembentukan bukti ZK 1,35 detik, menghasilkan "
         "estimasi latensi sekuensial end-to-end ~3,45 detik di bawah model server terdelegasi honest-but-curious.",
         is_italic=False
     )
@@ -700,7 +700,7 @@ def build_manuscript():
         ["**He dkk.**", "Ya (SE index)", "Tidak (Rekonstruksi server)", "Sedang (Tersamarkan indeks)", "Sedang (~120.000 gas)", "Server indeks pencarian tepercaya", "He dkk. (2024), hal. 2980"],
         ["**Eisdspa**", "Ya (Pedersen)", "Ya (Penjumlahan homomorfik)", "Tinggi (Linkable ring signature)", "Tinggi (~650.000 gas)", "Kurva eliptik standar; tanpa trusted setup", "Zhou dkk. (2024), hal. 7502"],
         ["**ZeeStar**", "Ya (ElGamal)", "Terbatas (BSGS ≤ 2⁴⁰)", "Sedang (Stealth address)", "Tinggi (>800.000 gas)", "Universal CRS setup; ZK verifier", "Steffen dkk. (2022), hal. 942"],
-        ["**TrustGive** *(Prototipe ini)*", "Tidak (Delegated Prover)", "Terbatas (Opening (M, R) via server)", "Relayer Server (Terselubung off-chain)", "613.607 – 1.481.690 gas (Empiris)", "Single-party Groth16 setup; server HbC", "Penelitian ini"]
+        ["**TrustGive** *(Prototipe ini)*", "Tidak (Delegated Prover)", "Terbatas (Opening (M, R) via server)", "Relayer Server (Terselubung off-chain)", "613.583 – 1.481.690 gas (Empiris)", "Single-party Groth16 setup; server HbC", "Penelitian ini"]
     ]
     tbl1_widths = [Cm(2.0), Cm(2.2), Cm(2.1), Cm(2.3), Cm(2.4), Cm(2.8), Cm(2.2)]
     tbl1_aligns = [WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT]
@@ -723,7 +723,7 @@ def build_manuscript():
         "serta memetakan batasan keamanan dan privasi arsitektur secara transparan. Kontribusi penelitian ini terfokus pada: (1) perancangan arsitektur hibrida 3-layer yang "
         "membagi beban komputasi antara backend Go, basis data PostgreSQL dengan pola *transactional idempotency & reconciliation worker*, dan kontrak pintar Solidity EVM; "
         "(2) evaluasi empiris konsumsi gas dan latensi komputasi terukur pada mesin terdedikasi; serta (3) pemetaan batasan keamanan dan privasi prototipe secara transparan "
-        "(model server *honest-but-curious*, celah *proof-to-ciphertext binding gap*, dan ketergantungan relayer) beserta evaluasi matematis skema pembukaan total agregat (M, R)."
+        "(model server *honest-but-curious*, celah *proof-to-ciphertext binding gap*, dan ketergantungan relayer) beserta evaluasi matematis skema pembukaan total agregat (M, R). Kontribusi utama penelitian ini berfokus pada rekayasa sistem (*systems engineering*) dan evaluasi empiris, bukan pengembangan primitif kriptografis teoritis baru."
     )
     
     # 8. METODE PENELITIAN
@@ -789,7 +789,7 @@ def build_manuscript():
     
     add_h2("3. Perancangan Sirkuit ZK-SNARK dan Soundness Komparator")
     add_body_p(
-        "Sirkuit ZK dirancang menggunakan bahasa Circom (kompatibel pragma circom 2.2.0) dan dikompilasi ke dalam sistem pembuktian Groth16 (Groth, 2016) di atas kurva BN254. "
+        "Sirkuit ZK dirancang menggunakan bahasa Circom (kompatibel pragma circom 2.2.0) (Muñoz-Tapia dkk., 2022) dan dikompilasi ke dalam sistem pembuktian Groth16 (Groth, 2016) di atas kurva BN254. "
         "Sirkuit DonationProof.circom menghasilkan **655 constraints** (374 non-linear constraints dan 281 linear constraints). "
         "Sirkuit membuktikan bahwa nilai donasi amount berada pada rentang positif (amount > 0) via GreaterThan(64) dan tidak melampaui pagu kampanye (amount ≤ campaign_max) "
         "via LessEqThan(64), dengan kedua syarat diwajibkan serentak via konstrain perkalian `isPositive.out * isWithinLimit.out === 1`. "
@@ -799,7 +799,7 @@ def build_manuscript():
         "**Analisis Soundness dan Batasan 64-Bit Komparator:** Komparator GreaterThan(64) dan LessEqThan(64) mengandalkan dekomposisi bit Num2Bits(65) internal Circom yang mengasumsikan "
         "input berada pada rentang < 2⁶⁴. Pada prototipe ini, sanitasi nilai nominal dan pagu ditegakkan pada lapisan backend Go sebelum saksi dibangkitkan. "
         "Untuk implementasi produksi, batasan bit eksplisit Num2Bits(64) wajib ditambahkan langsung ke sinyal input privat sirkuit guna menjamin soundness di tingkat kurva tanpa bergantung pada verifikasi eksternal. "
-        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof."
+        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark.git)."
     )
     
     add_h2("4. Perancangan Kontrak Pintar Solidity EVM")
@@ -917,7 +917,7 @@ def build_manuscript():
         "(1) **Trade-off terhadap Sistem Berbasis Relayer Penuh (Astraea & ZeeStar):** Astraea dan ZeeStar mengadopsi privasi penuh terhadap operator menggunakan relayer pool dan enkripsi privat, "
         "namun mengonsumsi gas sangat masif (>1.200.000 gas) dan menghadapi batasan kapasitas BSGS. TrustGive memangkas gas verifikasi mandiri menjadi 225.035 gas dengan mengalihkan agregasi ke off-chain. "
         "(2) **Trade-off terhadap Sistem Berbasis Pedersen Commitment (Eisdspa):** Eisdspa memanfaatkan Pedersen commitment yang non-extractable, menyulitkan pemulihan total saldo jika donatur tidak aktif. "
-        "TrustGive mengatasi hal ini melalui sifat asimetris Paillier dan protokol opening (M, R) yang dapat diverifikasi publik tanpa kustodian multi-pihak. "
+        "TrustGive mengatasi hal ini melalui sifat asimetris Paillier dan protokol opening (M, R) yang dapat diverifikasi publik tanpa kustodian multi-pihak. Meskipun formulasi matematis skema pembuktian terbuka (M, R) telah dirumuskan secara analitis untuk memfasilitasi auditabilitas publik atas total saldo tanpa membuka nominal individual, evaluasi kinerja empiris terhadap implementasi sirkuit verifikasi on-chain pembukaan (M, R) mandiri menjadi fokus agenda penelitian lanjutan (*future work*). "
         "(3) **Pemetaan Batas Privasi Prototipe:** Dua batasan utama prototipe ini adalah status server backend sebagai *honest-but-curious* dan celah *proof-to-ciphertext binding gap*, "
         "yang menjadi fokus agenda penyempurnaan sistem masa depan."
     )
@@ -932,8 +932,8 @@ def build_manuscript():
     
     add_body_p(
         "Hasil evaluasi empiris menunjukkan bahwa verifikasi pairing Groth16 mandiri memerlukan 225.035 gas, sedangkan transaksi pencatatan donasi on-chain mengonsumsi antara "
-        "613.607 gas (muatan ringkas) hingga 959.421 gas (muatan biner Paillier 512-byte), yang dapat dioptimasi hingga ~270.000 gas melalui pola penyimpanan event log. "
-        "Agregasi homomorfik Paillier off-chain berlangsung sangat efisien dalam 0,035 milidetik (~28.200 operasi/detik), sementara latensi transaksi end-to-end terukur sekitar 3,45 detik "
+        "dengan muatan string desimal saat ini memerlukan 1.481.690 gas (959.421 gas untuk muatan biner dan 613.583 gas untuk muatan ringkas, dengan proyeksi ~270.000 gas via event log). "
+        "Agregasi homomorfik Paillier off-chain berlangsung sangat efisien dalam 0,013 milidetik (~79.300 operasi/detik), sementara latensi transaksi end-to-end terukur sekitar 3,45 detik "
         "yang didominasi oleh komputasi bukti ZK. Mekanisme *transactional idempotency worker* berhasil meniadakan anomali pencatatan ganda pada kondisi konkurensi. "
         "Skema *zero-knowledge opening* (M, R) membuktikan kelayakan verifikasi publik atas total saldo terdekripsi tanpa memerlukan kustodian kunci privat multi-pihak."
     )
@@ -949,7 +949,7 @@ def build_manuscript():
         "**Agenda Penelitian Lanjutan:** Pengembangan prototipe ini menuju kesiapan produksi difokuskan pada tiga arah utama: "
         "(1) Pengimplementasian skema *verifiable encryption* SAVER untuk mengikat secara kriptografis saksi ZK dengan ciphertext Paillier guna menutup celah *binding gap*; "
         "(2) Penguatan keamanan kontrak pintar melalui penambahan pemetaan status `usedCommitments` dan pengikatan sinyal `campaign_id` ke dalam sirkuit guna mencegah serangan replay; serta "
-        "(3) Migrasi modul pembuktian ZK sepenuhnya ke sisi peramban donatur (*client-side prover*) menggunakan WebAssembly dan SnarkJS browser build."
+        "(3) Migrasi modul pembuktian ZK sepenuhnya ke sisi peramban donatur (*client-side prover*) menggunakan WebAssembly dan SnarkJS browser build; dan (4) Evaluasi empiris dan pengujian benchmark mandiri terhadap sirkuit verifikasi on-chain pembukaan total agregat (M, R) pada kontrak pintar."
     )
     
     # 11. DAFTAR PUSTAKA

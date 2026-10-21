@@ -1,0 +1,15 @@
+stateDiagram-v2
+    [*] --> Draft : Pengelola input data kampanye
+    Draft --> Registered_OnChain : Backend memanggil setCampaignMaxDonation()
+    Registered_OnChain --> Active : Tersimpan di DB & smart contract tervalidasi
+    
+    state Active {
+        [*] --> MenerimaDonasi : Donatur submit donasi
+        MenerimaDonasi --> VerifikasiZK : Cek rentang nilai & komitmen
+        VerifikasiZK --> AkumulasiHomomorfik : Ciphertext dikalikan ke aggregate
+        AkumulasiHomomorfik --> MenerimaDonasi : Menunggu donasi berikutnya
+    }
+
+    Active --> Closed : Batas waktu berakhir / Target tercapai
+    Closed --> Audited : Dekripsi terotorisasi & audit publik
+    Audited --> [*] : Penyaluran dana transparan

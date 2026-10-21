@@ -1,0 +1,21 @@
+flowchart TD
+    CLIENT["1. Client Layer (Antarmuka Pengguna)<br><small>Donatur (Web UI), Pengelola Kampanye, & Auditor Publik</small>"]
+    
+    GATEWAY["2. RESTful API Gateway (Go Gin)<br><small>Routing Layanan, Autentikasi JWT, & Idempotency Key Filter</small>"]
+    
+    CORE["3. Core Processing & Database Service<br><small>Validasi Input, Status Transaksi 'Pending', & Log Audit PostgreSQL</small>"]
+    
+    CRYPTO["4. Cryptographic Computation Engine<br><small>Enkripsi Homomorfik Paillier (AHE) & Generate ZK Witness (snarkjs)</small>"]
+    
+    RPC["5. EVM RPC Client & Relayer<br><small>Penyiapan Payload Transaksi, Signing (Private Key), & Broadcast</small>"]
+    
+    CONTRACTS["6. On-Chain Smart Contracts (EVM)<br><small>DonationRegistry.sol & Verifikasi Proof Groth16 (alt_bn128)</small>"]
+    
+    LEDGER[("7. EVM Immutable Distributed Ledger<br><small>Finalitas Blok, Penyimpanan State, & Emisi Log Event Audit</small>")]
+
+    CLIENT -->|"1. Request Donasi (HTTPS / REST)"| GATEWAY
+    GATEWAY -->|"2. Forward Payload Tervalidasi"| CORE
+    CORE -->|"3. Delegasi Enkripsi Nilai & Bukti ZK"| CRYPTO
+    CRYPTO -->|"4. Return Ciphertext & Proof Valid"| RPC
+    RPC -->|"5. Broadcast Transaksi On-Chain (Web3)"| CONTRACTS
+    CONTRACTS -->|"6. Pembaruan Komitmen & Emisi Event"| LEDGER

@@ -1,0 +1,35 @@
+flowchart LR
+    subgraph PRIV["Private Witness (Kerahasiaan Donatur)"]
+        v["Nominal Donasi (amount: v)"]
+        r["Salt Acak (secret: r)"]
+    end
+
+    subgraph PUB["Public Signals (Transparan di On-Chain)"]
+        max_d["Batas Maksimal Kampanye (max_donation)"]
+        comm["Komitmen Publik (expected_commitment)"]
+    end
+
+    subgraph CIRCUIT["Sirkuit Aritmatika R1CS (Circom 2 / BN254)"]
+        RC1{"Range Check 1:<br>v > 0"}
+        RC2{"Range Check 2:<br>v <= max_donation"}
+        HASH["Fungsi Hash Poseidon(2):<br>H = Poseidon(v, r)"]
+        EQ{"Constraint Kesetaraan:<br>H === expected_commitment"}
+    end
+
+    subgraph PROOF["Hasil Pembuktian (Groth16 Proof)"]
+        PI["Proof Tuple (3 Elemen Grup):<br>pi_a in G1 (64 bytes)<br>pi_b in G2 (128 bytes)<br>pi_c in G1 (64 bytes)"]
+        VER["Verifikasi Instan On-Chain<br>(Solidity Groth16Verifier ~200k Gas)"]
+    end
+
+    v --> RC1
+    v --> RC2
+    max_d --> RC2
+    v --> HASH
+    r --> HASH
+    HASH --> EQ
+    comm --> EQ
+
+    RC1 --> PI
+    RC2 --> PI
+    EQ --> PI
+    PI --> VER

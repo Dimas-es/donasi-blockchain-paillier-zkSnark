@@ -1,0 +1,43 @@
+erDiagram
+    USERS ||--o{ CAMPAIGNS : "membuat (created_by)"
+    USERS ||--o{ DONATIONS : "menyumbang (donor_id)"
+    CAMPAIGNS ||--o{ DONATIONS : "menerima (campaign_id)"
+    CAMPAIGNS ||--|| CAMPAIGN_AGGREGATES : "memiliki (campaign_id)"
+
+    USERS {
+        uuid id PK
+        varchar email
+        varchar password_hash
+        varchar role
+        timestamp created_at
+    }
+
+    CAMPAIGNS {
+        uuid id PK
+        varchar title
+        text description
+        numeric target_amount
+        numeric max_donation
+        varchar status
+        uuid created_by FK
+        timestamp created_at
+    }
+
+    DONATIONS {
+        uuid id PK
+        uuid campaign_id FK
+        uuid donor_id FK
+        varchar commitment
+        text encrypted_amount
+        jsonb zk_proof
+        varchar tx_hash
+        varchar status
+        varchar idempotency_key
+        timestamp created_at
+    }
+
+    CAMPAIGN_AGGREGATES {
+        uuid campaign_id PK
+        text encrypted_total
+        timestamp updated_at
+    }

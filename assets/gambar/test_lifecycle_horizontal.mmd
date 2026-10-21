@@ -1,0 +1,36 @@
+flowchart LR
+    %% Modern Professional Theme Styling
+    classDef startEnd fill:#0F172A,stroke:#0F172A,color:#FFFFFF,font-size:12px;
+    classDef draftStyle fill:#F8FAFC,stroke:#64748B,stroke-width:2px,color:#0F172A,font-size:11px,rx:8,ry:8;
+    classDef regStyle fill:#EEF2FF,stroke:#4F46E5,stroke-width:2px,color:#1E1B4B,font-size:11px,rx:8,ry:8;
+    classDef activeStyle fill:#ECFDF5,stroke:#059669,stroke-width:2.5px,color:#064E3B,font-size:11px,rx:8,ry:8;
+    classDef pauseStyle fill:#FFFBEB,stroke:#D97706,stroke-width:2px,color:#78350F,font-size:11px,rx:8,ry:8;
+    classDef closedStyle fill:#F0F9FF,stroke:#0284C7,stroke-width:2px,color:#082F49,font-size:11px,rx:8,ry:8;
+    classDef auditStyle fill:#FAF5FF,stroke:#7C3AED,stroke-width:2.5px,color:#3B0764,font-size:11px,rx:8,ry:8;
+    classDef subBox fill:#FFFFFF,stroke:#94A3B8,stroke-width:1.5px,stroke-dasharray: 4 4,color:#334155,font-size:12px,font-weight:bold,rx:10,ry:10;
+
+    START(( )):::startEnd -->|Inisiasi| S1
+
+    subgraph PHASE1 ["1. Inisiasi & Konfigurasi Pagu"]
+        S1["<b>1. DRAFT</b><br/><i>Inisiasi Metadata</i><br/>• Input judul & target dana<br/>• POST /api/campaigns"]:::draftStyle
+        S2["<b>2. REGISTERED</b><br/><i>Pengikatan On-Chain</i><br/>• setCampaignMaxDonation()<br/>• Pagu terkunci di EVM"]:::regStyle
+    end
+
+    S1 -->|Submit & Simpan| S2
+
+    subgraph PHASE2 ["2. Operasional Donasi Konfidensial"]
+        S3["<b>3. ACTIVE</b><br/><i>Penerimaan Donasi</i><br/>• Donatur submit ZK proof & c_v<br/>• Groth16 Verifier on-chain<br/>• Akumulasi: C_tot × c_v mod n²"]:::activeStyle
+        S4["<b>PAUSED</b><br/><i>Kondisi Darurat</i><br/>• togglePause() Organizer<br/>• Donasi ditahan sementara"]:::pauseStyle
+    end
+
+    S2 -->|Aktivasi Otomatis| S3
+    S3 <-->|Darurat / Resume| S4
+
+    subgraph PHASE3 ["3. Finalisasi & Audit Terbuka"]
+        S5["<b>4. COMPLETED</b><br/><i>Penggalangan Selesai</i><br/>• Periode / kuota tercapai<br/>• Donasi ditutup permanen"]:::closedStyle
+        S6["<b>5. AUDITED</b><br/><i>Dekripsi & Verifikasi</i><br/>• Dekripsi tunggal saldo agregat<br/>• Publikasi total dana transparan"]:::auditStyle
+    end
+
+    S3 -->|Target Tercapai| S5
+    S5 -->|Otorisasi Kunci Privat| S6
+    S6 --> END(( )):::startEnd

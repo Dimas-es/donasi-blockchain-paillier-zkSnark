@@ -1,0 +1,18 @@
+flowchart LR
+    subgraph ROW1 [Fase 1: Registrasi]
+        direction LR
+        S1[1. Status: Draft<br/>Pengelola Input Data & Pagu] -->|Backend Panggil setCampaignMaxDonation| S2[2. Status: Registered_OnChain<br/>Pagu Terkunci di Blockchain]
+    end
+    
+    subgraph ROW2 [Fase 2: Operasional]
+        direction LR
+        S4[4. Status: Paused<br/>Penangguhan Darurat] <-->|Emergency Pause / Resume| S3[3. Status: Active<br/>Menerima Donasi & Akumulasi Paillier]
+    end
+
+    subgraph ROW3 [Fase 3: Finalisasi]
+        direction LR
+        S5[5. Status: Completed<br/>Penggalangan Dana Ditutup] -->|Dekripsi Tunggal via Kunci Privat| S6[6. Status: Audited<br/>Publikasi Total Dana & Audit]
+    end
+
+    S2 -->|Aktivasi Otomatis| S3
+    S3 -->|Target / Waktu Tercapai| S5

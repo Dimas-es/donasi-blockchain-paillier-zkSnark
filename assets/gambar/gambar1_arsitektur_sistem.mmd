@@ -1,0 +1,44 @@
+flowchart TB
+    subgraph CLIENT["1. Client Layer (Antarmuka Pengguna)"]
+        D1["Donatur (Web UI)"]
+        D2["Pengelola Kampanye (Organizer)"]
+        D3["Publik & Auditor Independen"]
+    end
+
+    subgraph OFFCHAIN["2. Off-Chain Backend Layer (Go Gin & PostgreSQL)"]
+        API["RESTful API Gateway (Go Gin)"]
+        AUTH["Auth Service (JWT)"]
+        CAMP["Campaign Management Service"]
+        DON["Donation Processing Service"]
+        ZK_GEN["ZK Witness & Proof Generator (snarkjs)"]
+        PAILLIER["Paillier Homomorphic Engine (AHE)"]
+        DB[("PostgreSQL Database\n(Users, Campaigns, Donations, Aggregates)")]
+    end
+
+    subgraph ONCHAIN["3. On-Chain Blockchain Layer (EVM Smart Contracts)"]
+        RPC["EVM RPC Client / Signer"]
+        REG["DonationRegistry Contract"]
+        VER["Groth16Verifier Contract (alt_bn128)"]
+        LEDGER[("EVM Immutable Ledger\n(Commitments, Tx Receipts, Verified States)")]
+    end
+
+    D1 -->|"Request Donasi & Proof"| API
+    D2 -->|"Kelola Kampanye"| API
+    D3 -->|"Audit Transparansi"| API
+
+    API --> AUTH
+    API --> CAMP
+    API --> DON
+
+    AUTH --> DB
+    CAMP --> DB
+    DON --> DB
+    DON --> PAILLIER
+    DON --> ZK_GEN
+
+    CAMP -->|"setCampaignMaxDonation"| RPC
+    DON -->|"recordDonationWithProof"| RPC
+
+    RPC --> REG
+    REG -->|"verifyProof(A, B, C, PubInputs)"| VER
+    REG --> LEDGER

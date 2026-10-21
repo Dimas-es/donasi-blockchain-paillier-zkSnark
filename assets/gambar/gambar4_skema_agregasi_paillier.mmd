@@ -1,0 +1,31 @@
+flowchart TD
+    subgraph DONATIONS["1. Enkripsi Nominal Donasi Individual (Off-Chain Client/Node)"]
+        D1["Donasi 1: v1<br>Ciphertext: c1 = g^v1 * r1^n mod n^2"]
+        D2["Donasi 2: v2<br>Ciphertext: c2 = g^v2 * r2^n mod n^2"]
+        DN["Donasi n: vn<br>Ciphertext: cn = g^vn * rn^n mod n^2"]
+    end
+
+    subgraph AGGREGATION["2. Operasi Penjumlahan Homomorfik (Additive Homomorphism)"]
+        MULT["Perkalian Ciphertext Modular:<br>C_total = (c1 * c2 * ... * cn) mod n^2<br>= g^(v1 + v2 + ... + vn) * (r1 * r2 * ... * rn)^n mod n^2"]
+    end
+
+    subgraph STORAGE["3. Penyimpanan & Auditabilitas Publik (State)"]
+        AGG_DB[("PostgreSQL: campaign_aggregates<br>(encrypted_total)")]
+        AGG_BC[("Blockchain State: Public Aggregate<br>(Tervalidasi & Transparan)")]
+    end
+
+    subgraph AUDIT["4. Dekripsi Terotorisasi / Audit Akhir (Authorized Verifier)"]
+        DEC["Dekripsi dengan Private Key (L):<br>Total = L(C_total^lambda mod n^2) * mu mod n<br>= v1 + v2 + ... + vn"]
+        RES["Hasil Total Dana Kampanye Terbuka Tanpa Membocorkan Nominal Masing-Masing Donatur!"]
+    end
+
+    D1 --> MULT
+    D2 --> MULT
+    DN --> MULT
+
+    MULT --> AGG_DB
+    MULT --> AGG_BC
+
+    AGG_DB --> DEC
+    AGG_BC --> DEC
+    DEC --> RES

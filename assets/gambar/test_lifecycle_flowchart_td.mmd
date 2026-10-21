@@ -1,0 +1,23 @@
+flowchart TD
+    START([Mulai: Inisiasi Kampanye]) --> INP[Pengelola Input Data & Pagu Kampanye<br/>POST /api/campaigns]
+    INP --> DRAFT[Status: Draft]
+    
+    DRAFT --> LOCK[Backend Panggil setCampaignMaxDonation<br/>Kunci Pagu di Smart Contract EVM]
+    LOCK --> REG[Status: Registered_OnChain]
+    
+    REG --> ACT[Status: Active<br/>Penerimaan Donasi Dibuka]
+    
+    ACT --> COND{Kondisi Operasional?}
+    
+    COND -->|Penerimaan Donasi Normal| DON[Validasi Range Proof ZK via Groth16<br/>& Akumulasi Homomorfik Paillier]
+    DON -->|Update State| ACT
+    
+    COND -->|Kondisi Darurat| PAUSE[Status: Paused<br/>Penangguhan Sementara]
+    PAUSE -->|Resume Operasional| ACT
+    
+    COND -->|Batas Waktu / Target Tercapai| CLOSE[Status: Completed<br/>Gerbang Donasi Ditutup Permanen]
+    
+    CLOSE --> DECRYPT[Dekripsi Tunggal Saldo Agregat<br/>via Kunci Privat Paillier]
+    DECRYPT --> AUDIT[Status: Audited<br/>Verifikasi Publik & Rekonsiliasi]
+    
+    AUDIT --> END([Selesai: Publikasi Total Dana & Audit])

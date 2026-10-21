@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    actor D as Donatur (Klien)
+    participant UI as TrustGive Web UI
+    participant API as Backend (Go Gin)
+    participant ZK as ZK Prover / Verifier
+    participant P as Paillier Engine
+    participant DB as PostgreSQL
+    participant SC as Smart Contract (EVM)
+
+    D->>UI: Input nominal donasi (v) dan secret salt (r)
+    UI->>API: Request submit donasi (Header: Idempotency-Key)
+    API->>ZK: Hitung Poseidon(v, r) dan bukti rentang Groth16
+    ZK-->>API: Commitment C_zk dan ZK Proof (pi_a, pi_b, pi_c)
+    API->>P: Enkripsi nominal donasi: c = g^v * r^n mod n^2
+    P-->>API: Ciphertext Paillier (c)
+    API->>DB: INSERT donasi status 'pending' (Atomik)
+    API->>SC: Transaksi recordDonation(campaignId, C_zk, Proof)
+    Note over SC: Verifikasi on-chain via Groth16Verifier (alt_bn128)
+    SC-->>API: Transaksi confirmed on-chain & Tx Hash
+    API->>DB: UPDATE donasi status 'confirmed' & simpan Tx Hash
+    API->>DB: Akumulasi homomorfik saldo total kampanye
+    API-->>UI: Respon transaksi sukses & Receipt Hash
+    UI-->>D: Tampilkan notifikasi & tautan bukti transaksi

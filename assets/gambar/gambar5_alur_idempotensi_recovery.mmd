@@ -1,0 +1,20 @@
+flowchart TD
+    A([Permintaan Donasi Masuk]) --> B{"Periksa Header<br>Idempotency-Key"}
+    
+    B -->|Sudah Terdaftar| C[Ambil Data Transaksi Existing]
+    C --> D{Status Transaksi?}
+    D -->|Confirmed| E[Kembalikan Hasil Donasi & Tx Hash Sebelumnya]
+    D -->|Pending| F[Jalankan Polling Receipt / Recovery State]
+    
+    B -->|Kunci Baru| G[INSERT Donasi Status 'Pending' Secara Atomik]
+    G --> H[Submit Transaksi ke Smart Contract Blockchain]
+    
+    H --> I{Apakah Receipt<br>Berhasil Diterima?}
+    
+    I -->|Sukses On-Chain| J[UPDATE Status 'Confirmed' & Simpan Tx Hash]
+    J --> K[Akumulasi Saldo Homomorfik Kampanye]
+    K --> L([Respon 200 OK ke Donatur])
+    
+    I -->|Timeout / RPC Error| M[Pertahankan Status 'Pending']
+    M --> N[Catat Log Audit & Jalankan Background Reconciler]
+    N --> O([Respon 202 Accepted / Retry Safe])

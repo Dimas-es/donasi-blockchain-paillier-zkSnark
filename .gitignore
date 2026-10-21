@@ -55,7 +55,14 @@ blockchain/typechain-types/
 .kilo/
 scratch/
 
-# Office / Temporary docx lock files
+# Journal, Manuscript & Review Notes
+assets/jurnal/
+assets/revisi/
+assets/template/
+
+# Office / Word documents & lock files
+*.docx
+*.doc
 ~$*.docx
 ~$*.doc
 test_*.docx

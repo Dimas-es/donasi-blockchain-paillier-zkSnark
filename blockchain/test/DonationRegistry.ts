@@ -133,4 +133,158 @@ describe("DonationRegistry", function () {
 
     expect(reverted).to.equal(true);
   });
+
+  it("should reject when campaignMax public signal is substituted", async function () {
+    const { ethers } = await network.getOrCreate();
+    const { registry } = await deployRegistry();
+
+    const proof = JSON.parse(
+      fs.readFileSync("../zk/build/donation-proof.json", "utf8"),
+    );
+    const publicSignals = JSON.parse(
+      fs.readFileSync("../zk/build/donation-public.json", "utf8"),
+    );
+
+    const campaignId = ethers.encodeBytes32String("campaign-1");
+    const commitment = ethers.zeroPadValue(
+      ethers.toBeHex(BigInt(publicSignals[1])),
+      32,
+    );
+    const encryptedAmount = ethers.hexlify(
+      ethers.toUtf8Bytes("encrypted-paillier-value"),
+    );
+    const campaignMax = BigInt(publicSignals[0]);
+
+    const pA = [BigInt(proof.pi_a[0]), BigInt(proof.pi_a[1])];
+    const pB = [
+      [BigInt(proof.pi_b[0][1]), BigInt(proof.pi_b[0][0])],
+      [BigInt(proof.pi_b[1][1]), BigInt(proof.pi_b[1][0])],
+    ];
+    const pC = [BigInt(proof.pi_c[0]), BigInt(proof.pi_c[1])];
+
+    // Alter campaignMax in public signal (e.g. + 500)
+    const alteredMaxSignals = [campaignMax + 500n, BigInt(publicSignals[1])];
+
+    await registry.setCampaignMaxDonation(campaignId, campaignMax);
+
+    let reverted = false;
+    try {
+      await registry.recordDonation(
+        campaignId,
+        commitment,
+        encryptedAmount,
+        pA,
+        pB,
+        pC,
+        alteredMaxSignals,
+      );
+    } catch (error) {
+      reverted = true;
+      expect(String(error)).to.include("invalid campaign max");
+    }
+    expect(reverted).to.equal(true);
+  });
+
+  it("should reject when zk proof pairing check fails", async function () {
+    const { ethers } = await network.getOrCreate();
+    const { registry } = await deployRegistry();
+
+    const proof = JSON.parse(
+      fs.readFileSync("../zk/build/donation-proof.json", "utf8"),
+    );
+    const publicSignals = JSON.parse(
+      fs.readFileSync("../zk/build/donation-public.json", "utf8"),
+    );
+
+    const campaignId = ethers.encodeBytes32String("campaign-1");
+    const commitment = ethers.zeroPadValue(
+      ethers.toBeHex(BigInt(publicSignals[1])),
+      32,
+    );
+    const encryptedAmount = ethers.hexlify(
+      ethers.toUtf8Bytes("encrypted-paillier-value"),
+    );
+    const campaignMax = BigInt(publicSignals[0]);
+
+    // Corrupt proof point pA
+    const corruptedPA = [BigInt(proof.pi_a[0]) + 1n, BigInt(proof.pi_a[1])];
+    const pB = [
+      [BigInt(proof.pi_b[0][1]), BigInt(proof.pi_b[0][0])],
+      [BigInt(proof.pi_b[1][1]), BigInt(proof.pi_b[1][0])],
+    ];
+    const pC = [BigInt(proof.pi_c[0]), BigInt(proof.pi_c[1])];
+    const pubSignals = [campaignMax, BigInt(publicSignals[1])];
+
+    await registry.setCampaignMaxDonation(campaignId, campaignMax);
+
+    let reverted = false;
+    try {
+      await registry.recordDonation(
+        campaignId,
+        commitment,
+        encryptedAmount,
+        corruptedPA,
+        pB,
+        pC,
+        pubSignals,
+      );
+    } catch (error) {
+      reverted = true;
+      expect(String(error)).to.include("invalid zk proof");
+    }
+    expect(reverted).to.equal(true);
+  });
+
+  it("should record an optimized donation with event-log hash storage", async function () {
+    const { ethers } = await network.getOrCreate();
+    const { registry } = await deployRegistry();
+
+    const proof = JSON.parse(
+      fs.readFileSync("../zk/build/donation-proof.json", "utf8"),
+    );
+    const publicSignals = JSON.parse(
+      fs.readFileSync("../zk/build/donation-public.json", "utf8"),
+    );
+
+    const campaignId = ethers.encodeBytes32String("campaign-1");
+    const commitment = ethers.zeroPadValue(
+      ethers.toBeHex(BigInt(publicSignals[1])),
+      32,
+    );
+    const encryptedAmount = ethers.hexlify(
+      ethers.toUtf8Bytes("encrypted-paillier-value"),
+    );
+    const campaignMax = BigInt(publicSignals[0]);
+
+    const pA = [BigInt(proof.pi_a[0]), BigInt(proof.pi_a[1])];
+    const pB = [
+      [BigInt(proof.pi_b[0][1]), BigInt(proof.pi_b[0][0])],
+      [BigInt(proof.pi_b[1][1]), BigInt(proof.pi_b[1][0])],
+    ];
+    const pC = [BigInt(proof.pi_c[0]), BigInt(proof.pi_c[1])];
+    const pubSignals = [campaignMax, BigInt(publicSignals[1])];
+
+    await registry.setCampaignMaxDonation(campaignId, campaignMax);
+
+    const tx = await registry.recordDonationOptimized(
+      campaignId,
+      commitment,
+      encryptedAmount,
+      pA,
+      pB,
+      pC,
+      pubSignals,
+    );
+    const receipt = await tx.wait();
+    expect(receipt?.status).to.equal(1);
+    expect(receipt?.gasUsed).to.be.lessThan(500000n);
+
+    const count = await registry.getOptimizedDonationCount();
+    expect(count).to.equal(1n);
+
+    const donation = await registry.getOptimizedDonation(0);
+    expect(donation.campaignId).to.equal(campaignId);
+    expect(donation.commitment).to.equal(commitment);
+    expect(donation.encryptedAmountHash).to.equal(ethers.keccak256(encryptedAmount));
+  });
 });

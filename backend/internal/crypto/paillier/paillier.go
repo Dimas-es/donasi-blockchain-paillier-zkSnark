@@ -152,6 +152,66 @@ func (pk *PublicKey) Add(
 	return result, nil
 }
 
+// EncryptWithRandomness performs Paillier encryption with a specific randomness r.
+// Useful for reproducible tests and opening (M, R) verification schemes.
+func (pk *PublicKey) EncryptWithRandomness(message, r *big.Int) (*big.Int, error) {
+	if message == nil || r == nil {
+		return nil, errors.New("inputs cannot be nil")
+	}
+
+	if message.Sign() < 0 {
+		return nil, errors.New("message cannot be negative")
+	}
+
+	if message.Cmp(pk.N) >= 0 {
+		return nil, errors.New("message must be smaller than n")
+	}
+
+	// c = g^m * r^n mod n^2
+	gm := new(big.Int).Exp(pk.G, message, pk.N2)
+	rn := new(big.Int).Exp(r, pk.N, pk.N2)
+
+	ciphertext := new(big.Int).Mul(gm, rn)
+	ciphertext.Mod(ciphertext, pk.N2)
+
+	return ciphertext, nil
+}
+
+// VerifyOpening performs zero-knowledge public opening verification on aggregated ciphertext:
+// Checks congruence: c_agg == (1 + M*n) * R^n mod n^2 using only the public key.
+// Returns true if M and R correctly open c_agg without requiring the private key.
+func (pk *PublicKey) VerifyOpening(cAgg, m, r *big.Int) bool {
+	if cAgg == nil || m == nil || r == nil {
+		return false
+	}
+
+	if cAgg.Sign() < 0 || cAgg.Cmp(pk.N2) >= 0 {
+		return false
+	}
+
+	if m.Sign() < 0 || m.Cmp(pk.N) >= 0 {
+		return false
+	}
+
+	if r.Sign() <= 0 || r.Cmp(pk.N) >= 0 {
+		return false
+	}
+
+	// Term 1: (1 + M*n) mod n^2
+	onePlusMn := new(big.Int).Mul(m, pk.N)
+	onePlusMn.Add(onePlusMn, big.NewInt(1))
+	onePlusMn.Mod(onePlusMn, pk.N2)
+
+	// Term 2: R^n mod n^2
+	rn := new(big.Int).Exp(r, pk.N, pk.N2)
+
+	// Expected: (1 + M*n) * R^n mod n^2
+	expected := new(big.Int).Mul(onePlusMn, rn)
+	expected.Mod(expected, pk.N2)
+
+	return cAgg.Cmp(expected) == 0
+}
+
 func lcm(a, b *big.Int) *big.Int {
 	gcd := new(big.Int).GCD(nil, nil, a, b)
 

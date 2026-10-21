@@ -129,6 +129,82 @@ contract DonationRegistry {
         );
     }
 
+    struct OptimizedDonation {
+        bytes32 campaignId;
+        bytes32 commitment;
+        bytes32 encryptedAmountHash;
+        bytes32 zkProofHash;
+        address submitter;
+        uint96 timestamp;
+    }
+
+    OptimizedDonation[] private optimizedDonations;
+
+    event DonationRecordedOptimized(
+        uint256 indexed donationId,
+        bytes32 indexed campaignId,
+        bytes32 indexed commitment,
+        bytes32 encryptedAmountHash,
+        bytes32 zkProofHash,
+        bytes encryptedAmount,
+        address submitter,
+        uint256 timestamp
+    );
+
+    function recordDonationOptimized(
+        bytes32 campaignId,
+        bytes32 commitment,
+        bytes calldata encryptedAmount,
+        uint[2] calldata pA,
+        uint[2][2] calldata pB,
+        uint[2] calldata pC,
+        uint[2] calldata pubSignals
+    ) external returns (uint256 donationId) {
+        {
+            uint256 campaignMax = campaignMaxDonation[campaignId];
+            require(campaignMax > 0, "campaign not registered");
+            require(pubSignals[0] == campaignMax, "invalid campaign max");
+            require(pubSignals[1] == uint256(commitment), "invalid commitment");
+        }
+
+        require(
+            verifier.verifyProof(
+                pA,
+                pB,
+                pC,
+                pubSignals
+            ),
+            "invalid zk proof"
+        );
+
+        bytes32 encHash = keccak256(encryptedAmount);
+        bytes32 proofHash = keccak256(abi.encode(pA, pB, pC, pubSignals));
+
+        donationId = optimizedDonations.length;
+
+        optimizedDonations.push(
+            OptimizedDonation({
+                campaignId: campaignId,
+                commitment: commitment,
+                encryptedAmountHash: encHash,
+                zkProofHash: proofHash,
+                submitter: msg.sender,
+                timestamp: uint96(block.timestamp)
+            })
+        );
+
+        emit DonationRecordedOptimized(
+            donationId,
+            campaignId,
+            commitment,
+            encHash,
+            proofHash,
+            encryptedAmount,
+            msg.sender,
+            block.timestamp
+        );
+    }
+
     function getDonation(
         uint256 donationId
     )
@@ -166,5 +242,44 @@ contract DonationRegistry {
         returns (uint256)
     {
         return donations.length;
+    }
+
+    function getOptimizedDonation(
+        uint256 donationId
+    )
+        external
+        view
+        returns (
+            bytes32 campaignId,
+            bytes32 commitment,
+            bytes32 encryptedAmountHash,
+            bytes32 zkProofHash,
+            address submitter,
+            uint256 timestamp
+        )
+    {
+        require(
+            donationId < optimizedDonations.length,
+            "donation not found"
+        );
+
+        OptimizedDonation storage donation = optimizedDonations[donationId];
+
+        return (
+            donation.campaignId,
+            donation.commitment,
+            donation.encryptedAmountHash,
+            donation.zkProofHash,
+            donation.submitter,
+            donation.timestamp
+        );
+    }
+
+    function getOptimizedDonationCount()
+        external
+        view
+        returns (uint256)
+    {
+        return optimizedDonations.length;
     }
 }

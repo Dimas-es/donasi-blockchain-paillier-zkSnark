@@ -48,7 +48,7 @@ Cakupan: auth, campaign, Paillier, circuit dan Groth16, smart contract, API dona
 - [x] Definisikan threat model dan properti privasi (ringkas di [08-KEAMANAN.md](08-KEAMANAN.md) §5).
 - [x] Desain proof-to-ciphertext binding ([17-PROOF-CIPHERTEXT-BINDING.md](17-PROOF-CIPHERTEXT-BINDING.md)); implementasi circuit belum.
 - [ ] Evaluasi client-side encryption dan pengelolaan randomness.
-- [ ] Benchmark proof generation/verification serta Paillier (perintah di [20-TEMPLATE-EVALUASI.md](20-TEMPLATE-EVALUASI.md)).
+- [x] Benchmark proof generation/verification, Paillier, gas EVM, dan latensi on-chain terstandarisasi (hasil mentah CSV dan ringkasan JSON di `assets/benchmark/`, naskah SIMASI).
 - [ ] Tinjau keamanan kunci dan trusted setup (ringkas di [18-BACKUP-RECOVERY-DEMO.md](18-BACKUP-RECOVERY-DEMO.md)).
 
 **Exit criteria:** klaim kriptografi dibuktikan melalui desain, test, dan evaluasi yang dapat direproduksi.
@@ -63,8 +63,8 @@ Cakupan: auth, campaign, Paillier, circuit dan Groth16, smart contract, API dona
 - [x] Security/reliability tests terstruktur (checklist [19-SECURITY-TEST-CHECKLIST.md](19-SECURITY-TEST-CHECKLIST.md), `handler_create_test.go`).
 - [x] Observability dasar: log request (`X-Request-Id`), `/health/ready` (ping DB).
 - [x] Backup & recovery demo ([18-BACKUP-RECOVERY-DEMO.md](18-BACKUP-RECOVERY-DEMO.md)); staging terpisah belum.
-- [x] Template evaluasi laporan ([20-TEMPLATE-EVALUASI.md](20-TEMPLATE-EVALUASI.md)); isi angka oleh peneliti.
-- [x] Dokumentasi keterbatasan demo ([16-KETERBATASAN-DEMO.md](16-KETERBATASAN-DEMO.md)); laporan eksperimen formal masih terbuka.
+- [x] Template evaluasi laporan ([20-TEMPLATE-EVALUASI.md](20-TEMPLATE-EVALUASI.md)); pengujian empiris telah selesai direkapitulasi.
+- [x] Dokumentasi keterbatasan demo ([16-KETERBATASAN-DEMO.md](16-KETERBATASAN-DEMO.md)); laporan eksperimen formal telah selesai disusun untuk jurnal ilmiah SIMASI.
 
 ## Next step langsung
 

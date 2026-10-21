@@ -224,3 +224,84 @@ func TestIncrementalHomomorphicAggregation(t *testing.T) {
 		)
 	}
 }
+
+func TestZeroKnowledgeOpeningVerification(t *testing.T) {
+	publicKey, privateKey, err := GenerateKeypair(512)
+	if err != nil {
+		t.Fatalf("failed to generate keypair: %v", err)
+	}
+
+	// 1. Setup 3 simulated donation amounts
+	amounts := []*big.Int{
+		big.NewInt(150000), // donation 1: Rp 150.000
+		big.NewInt(350000), // donation 2: Rp 350.000
+		big.NewInt(500000), // donation 3: Rp 500.000
+	}
+
+	// 2. Sample 3 explicit random coprimes r_i
+	rValues := make([]*big.Int, len(amounts))
+	for i := range amounts {
+		r, err := randomCoprime(publicKey.N)
+		if err != nil {
+			t.Fatalf("failed to sample coprime: %v", err)
+		}
+		rValues[i] = r
+	}
+
+	// 3. Encrypt donations deterministically using r_i
+	var cAgg *big.Int
+	totalM := big.NewInt(0)
+	totalR := big.NewInt(1)
+
+	for i, m := range amounts {
+		c, err := publicKey.EncryptWithRandomness(m, rValues[i])
+		if err != nil {
+			t.Fatalf("failed to encrypt donation %d: %v", i+1, err)
+		}
+
+		totalM.Add(totalM, m)
+		totalR.Mul(totalR, rValues[i])
+		totalR.Mod(totalR, publicKey.N)
+
+		if cAgg == nil {
+			cAgg = c
+		} else {
+			cAgg, err = publicKey.Add(cAgg, c)
+			if err != nil {
+				t.Fatalf("failed to homomorphically aggregate ciphertext %d: %v", i+1, err)
+			}
+		}
+	}
+
+	// Verify standard private key decryption matches M
+	decryptedM, err := privateKey.Decrypt(cAgg)
+	if err != nil {
+		t.Fatalf("failed to decrypt cAgg: %v", err)
+	}
+	if decryptedM.Cmp(totalM) != 0 {
+		t.Fatalf("decryption mismatch: got %s, want %s", decryptedM, totalM)
+	}
+
+	// 4. Test Case 1: Valid Opening (M, R) verification WITHOUT private key
+	// Anyone can verify cAgg == (1 + M*n) * R^n mod n^2 using only publicKey
+	if !publicKey.VerifyOpening(cAgg, totalM, totalR) {
+		t.Fatalf("valid opening (M, R) failed verification!")
+	}
+
+	// 5. Test Case 2: Tampered M (Wrong amount) MUST FAIL
+	forgedM := new(big.Int).Add(totalM, big.NewInt(1000)) // attacker claims extra Rp 1.000
+	if publicKey.VerifyOpening(cAgg, forgedM, totalR) {
+		t.Fatalf("tampered M was accepted! Soundness violation!")
+	}
+
+	forgedM2 := new(big.Int).Sub(totalM, big.NewInt(50000)) // attacker under-reports
+	if publicKey.VerifyOpening(cAgg, forgedM2, totalR) {
+		t.Fatalf("under-reported M was accepted! Soundness violation!")
+	}
+
+	// 6. Test Case 3: Tampered R (Wrong randomness) MUST FAIL
+	forgedR := new(big.Int).Add(totalR, big.NewInt(1))
+	if publicKey.VerifyOpening(cAgg, totalM, forgedR) {
+		t.Fatalf("tampered R was accepted! Soundness violation!")
+	}
+}

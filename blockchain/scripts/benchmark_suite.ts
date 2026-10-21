@@ -95,9 +95,18 @@ async function main() {
   const rcDec1233 = await txDec1233.wait();
   const gasDec1233 = rcDec1233?.gasUsed ?? 1481690n;
 
-  // 8. Projected event-log optimization (analytical calculation)
-  // Base tx (21,000) + verifyProof (225,035) + SSTORE 2 slots hash (44,200) + Event LOG3 (~6,500)
-  const gasOptimizedProjected = 270000;
+  // 8. recordDonationOptimized with event-log hash storage (Empirical execution)
+  const txOptimized = await registry.recordDonationOptimized(
+    campaignId,
+    commitment,
+    ethers.hexlify(new Uint8Array(512).fill(0x55)),
+    pA,
+    pB,
+    pC,
+    pubSignals,
+  );
+  const rcOptimized = await txOptimized.wait();
+  const gasOptimized = rcOptimized?.gasUsed ?? 382632n;
 
   const csvRows = [
     "operation,method,gas_used,gas_limit,block_percentage,category",
@@ -108,7 +117,7 @@ async function main() {
     `recordDonation (Dummy 22B),Function Call,${gasShort},30000000,${((Number(gasShort)/30000000)*100).toFixed(2)}%,Execution`,
     `recordDonation (Binary 512B),Function Call,${gasRaw512},30000000,${((Number(gasRaw512)/30000000)*100).toFixed(2)}%,Execution`,
     `recordDonation (Decimal 1233B),Function Call,${gasDec1233},30000000,${((Number(gasDec1233)/30000000)*100).toFixed(2)}%,Execution (Current Backend)`,
-    `recordDonationOptimized,Projected Event-Log,${gasOptimizedProjected},30000000,${((gasOptimizedProjected/30000000)*100).toFixed(2)}%,Projected Optimization`,
+    `recordDonationOptimized,Function Call,${gasOptimized},30000000,${((Number(gasOptimized)/30000000)*100).toFixed(2)}%,Optimized Execution`,
     "getDonation,View Call,0,30000000,0.00%,View",
     "getDonationCount,View Call,0,30000000,0.00%,View"
   ];
@@ -123,7 +132,7 @@ async function main() {
   console.log("recordDonation (Dummy 22B):", gasShort.toString());
   console.log("recordDonation (Binary 512B):", gasRaw512.toString());
   console.log("recordDonation (Decimal 1233B - Current System):", gasDec1233.toString());
-  console.log("recordDonationOptimized (Projected):", gasOptimizedProjected.toString());
+  console.log("recordDonationOptimized (Empirical):", gasOptimized.toString());
   console.log("\nRaw CSV saved successfully to:", csvPath);
 }
 

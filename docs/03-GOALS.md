@@ -13,13 +13,13 @@ Membangun prototipe donasi yang **dapat diaudit**, **mendukung agregasi terenkri
 | G-05 | Keandalan | Pemulihan dan rekonsiliasi dapat diuji pada kegagalan | MVP sidang (admin, worker pending, skrip smoke; bukan staging produksi) |
 | G-06 | Usabilitas | Happy path tersedia melalui frontend | MVP TrustGive |
 | G-07 | Privasi yang lebih kuat | Bukti mengikat ciphertext ke witness; threat model terpenuhi | Riset lanjutan |
-| G-08 | Evaluasi ilmiah | Benchmark dan hasil pengujian dapat direproduksi | Direncanakan |
+| G-08 | Evaluasi ilmiah | Benchmark dan hasil pengujian dapat direproduksi | Selesai (Dataset CSV & JSON terstandarisasi di `assets/benchmark/`, naskah SIMASI) |
 
 ## Prioritas pengerjaan
 
 **P0 (MVP sidang):** integritas data, idempotency, recovery, konsistensi aggregate — **selesai untuk demo lokal** ([09-ROADMAP.md](09-ROADMAP.md) Phase 2).  
 **P1:** UI, dokumentasi API — **MVP TrustGive selesai**; observability dan pengujian E2E otomatis masih direncanakan (Phase 5).  
-**P2:** proof-to-ciphertext binding, benchmark, deployment staging (Phase 4–5).
+**P2:** proof-to-ciphertext binding, deployment staging (Phase 4–5); benchmark formal telah selesai.
 
 ## Definisi selesai
 

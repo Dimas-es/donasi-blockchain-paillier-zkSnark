@@ -17,58 +17,135 @@
     "KeyGen-512": {
       "count": 50,
       "mean_ms": 6.432,
-      "std_dev_ms": 2.884078449418462,
+      "std_dev_sample_ms": 2.913359184368254,
+      "std_dev_pop_ms": 2.884078449418462,
+      "std_dev_ms": 2.913359184368254,
+      "median_ms": 6.1265,
+      "p95_ms": 11.60799,
       "min_ms": 0.0,
-      "max_ms": 12.9655
+      "max_ms": 12.9655,
+      "timer_adjusted": {
+        "count": 49,
+        "mean_ms": 6.5632653061224495,
+        "std_dev_sample_ms": 2.7901631623102126,
+        "median_ms": 6.4049,
+        "p95_ms": 11.633579999999997,
+        "min_ms": 2.0155,
+        "max_ms": 12.9655,
+        "note": "1 reading of 0.00 ms excluded as Windows scheduler timer quantum resolution artifact"
+      }
     },
     "KeyGen-2048": {
       "count": 30,
       "mean_ms": 278.22039,
-      "std_dev_ms": 117.1754454287881,
+      "std_dev_sample_ms": 119.1785895986597,
+      "std_dev_pop_ms": 117.1754454287881,
+      "std_dev_ms": 119.1785895986597,
+      "median_ms": 269.21439999999996,
+      "p95_ms": 510.1094499999999,
       "min_ms": 74.2322,
       "max_ms": 528.0055
     },
     "Encrypt-2048": {
       "count": 100,
       "mean_ms": 20.186468,
-      "std_dev_ms": 6.673633364815302,
+      "std_dev_sample_ms": 6.707253896814955,
+      "std_dev_pop_ms": 6.673633364815302,
+      "std_dev_ms": 6.707253896814955,
+      "median_ms": 19.15065,
+      "p95_ms": 33.524885,
       "min_ms": 8.2435,
       "max_ms": 54.0784
     },
     "Add-2048": {
       "count": 100,
       "mean_ms": 0.01264446,
-      "std_dev_ms": 0.004136058242868444,
+      "std_dev_sample_ms": 0.004156894940197356,
+      "std_dev_pop_ms": 0.004136058242868444,
+      "std_dev_ms": 0.004156894940197356,
+      "median_ms": 0.012064,
+      "p95_ms": 0.020450199999999998,
       "min_ms": 0.003579,
       "max_ms": 0.024209
     },
     "Decrypt-2048": {
       "count": 100,
       "mean_ms": 17.957161,
-      "std_dev_ms": 3.9647414965895322,
+      "std_dev_sample_ms": 3.984715131799882,
+      "std_dev_pop_ms": 3.9647414965895322,
+      "std_dev_ms": 3.984715131799882,
+      "median_ms": 18.241100000000003,
+      "p95_ms": 23.390614999999993,
       "min_ms": 10.1365,
       "max_ms": 29.4595
     },
     "fullprove_wasm_groth16": {
       "count": 30,
       "mean_ms": 212.18176666666665,
-      "std_dev_ms": 97.08548835810747,
+      "std_dev_sample_ms": 98.74518958025362,
+      "std_dev_pop_ms": 97.08548835810747,
+      "std_dev_ms": 98.74518958025362,
+      "median_ms": 189.56375,
+      "p95_ms": 249.19689999999997,
       "min_ms": 169.4775,
-      "max_ms": 722.6337
+      "max_ms": 722.6337,
+      "cold_start_ms": 722.6337,
+      "steady_state": {
+        "count": 29,
+        "mean_ms": 194.57997586206895,
+        "std_dev_sample_ms": 21.730259598322057,
+        "median_ms": 189.3851,
+        "p95_ms": 236.15583999999996,
+        "min_ms": 169.4775,
+        "max_ms": 253.381,
+        "note": "Excludes iteration 1 cold-start WASM/JIT compilation"
+      }
     },
     "verify_in_process_js": {
       "count": 30,
       "mean_ms": 19.84071333333333,
-      "std_dev_ms": 2.933934230543615,
+      "std_dev_sample_ms": 2.9840905856331448,
+      "std_dev_pop_ms": 2.933934230543615,
+      "std_dev_ms": 2.9840905856331448,
+      "median_ms": 18.947850000000003,
+      "p95_ms": 24.40654,
       "min_ms": 16.1871,
       "max_ms": 32.0162
     },
     "verify_subprocess_npx": {
       "count": 30,
       "mean_ms": 1935.30387,
-      "std_dev_ms": 105.96883504294445,
+      "std_dev_sample_ms": 107.78039934575193,
+      "std_dev_pop_ms": 105.96883504294445,
+      "std_dev_ms": 107.78039934575193,
+      "median_ms": 1922.2150000000001,
+      "p95_ms": 2095.7642650000003,
       "min_ms": 1784.2608,
       "max_ms": 2185.5093
+    }
+  },
+  "onchain_timing": {
+    "verifyProof_pairing_precompile_0x08": {
+      "count": 30,
+      "mean_ms": 4.153676666666667,
+      "std_dev_sample_ms": 0.3079760925375745,
+      "std_dev_pop_ms": 0.30279965508933837,
+      "std_dev_ms": 0.3079760925375745,
+      "median_ms": 4.046799999999999,
+      "p95_ms": 4.65468,
+      "min_ms": 3.7188,
+      "max_ms": 4.7697
+    },
+    "recordDonation_tx_automine": {
+      "count": 30,
+      "mean_ms": 14.143823333333334,
+      "std_dev_sample_ms": 2.1174676604106746,
+      "std_dev_pop_ms": 2.0818774339016426,
+      "std_dev_ms": 2.1174676604106746,
+      "median_ms": 13.05265,
+      "p95_ms": 18.111669999999997,
+      "min_ms": 11.9613,
+      "max_ms": 18.6189
     }
   },
   "gas_metrics": [
@@ -83,15 +160,15 @@
     {
       "operation": "Deploy DonationRegistry",
       "method": "Contract Creation",
-      "gas_used": 1240542,
+      "gas_used": 1598894,
       "gas_limit": 30000000,
-      "block_percentage": "4.14%",
+      "block_percentage": "5.33%",
       "category": "Deployment"
     },
     {
       "operation": "setCampaignMaxDonation",
       "method": "Function Call",
-      "gas_used": 45886,
+      "gas_used": 45908,
       "gas_limit": 30000000,
       "block_percentage": "0.15%",
       "category": "Configuration"
@@ -107,7 +184,7 @@
     {
       "operation": "recordDonation (Dummy 22B)",
       "method": "Function Call",
-      "gas_used": 613583,
+      "gas_used": 613627,
       "gas_limit": 30000000,
       "block_percentage": "2.05%",
       "category": "Execution"
@@ -115,7 +192,7 @@
     {
       "operation": "recordDonation (Binary 512B)",
       "method": "Function Call",
-      "gas_used": 959421,
+      "gas_used": 959465,
       "gas_limit": 30000000,
       "block_percentage": "3.20%",
       "category": "Execution"
@@ -123,18 +200,18 @@
     {
       "operation": "recordDonation (Decimal 1233B)",
       "method": "Function Call",
-      "gas_used": 1481690,
+      "gas_used": 1481734,
       "gas_limit": 30000000,
       "block_percentage": "4.94%",
       "category": "Execution (Current Backend)"
     },
     {
       "operation": "recordDonationOptimized",
-      "method": "Projected Event-Log",
-      "gas_used": 270000,
+      "method": "Function Call",
+      "gas_used": 382632,
       "gas_limit": 30000000,
-      "block_percentage": "0.90%",
-      "category": "Projected Optimization"
+      "block_percentage": "1.28%",
+      "category": "Optimized Execution"
     },
     {
       "operation": "getDonation",

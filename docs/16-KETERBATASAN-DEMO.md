@@ -25,4 +25,4 @@ Ringkasan untuk sidang dan penulisan laporan. Detail keamanan: [08-KEAMANAN.md](
 
 ## Yang disengaja di luar scope MVP
 
-- Proof-to-ciphertext binding, client-side encryption, staging terpisah, laporan benchmark formal (Phase 4–5 roadmap).
+- Proof-to-ciphertext binding, client-side encryption, staging terpisah (Phase 4–5 roadmap). Evaluasi kinerja dan benchmark empiris telah diselesaikan secara formal (lihat direktori `assets/benchmark/` dan naskah jurnal SIMASI).

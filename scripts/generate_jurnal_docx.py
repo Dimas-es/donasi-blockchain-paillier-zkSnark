@@ -616,9 +616,9 @@ def build_manuscript():
         "and Ethereum smart contracts. Individual donations are encrypted off-chain via Paillier and aggregated through modular multiplication, "
         "while range validity is verified on-chain via zero-knowledge proofs over the BN254 curve without exposing plaintext values. "
         "Empirical evaluations on the prototype show that standalone Groth16 verification consumes 225,035 gas, while on-chain recording under "
-        "the current decimal string payload consumes 1,481,690 gas (959,421 gas for binary and 613,583 gas for compact payloads, optimizable to "
-        "~270,000 gas via event logs). Off-chain addition takes 0.013 ms (~79,300 op/s) and proof generation requires 1.35 s, achieving a sequential end-to-end "
-        "latency of ~3.45 s under a delegated honest-but-curious server model.",
+        "the current decimal string payload consumes 1,481,734 gas (959,465 gas for binary and 613,627 gas for compact payloads, reduced to "
+        "382,632 gas via the implemented event-log hash storage optimization). Off-chain addition takes 0.013 ms (~79,100 op/s) and in-process Groth16 proof generation requires 212.18 ms (median 189.56 ms, steady-state 194.58 ms), achieving a responsive in-process sequential end-to-end "
+        "latency of ~241–266 ms (<0.3 s) under a delegated honest-but-curious server model.",
         is_italic=True
     )
     add_keywords("Keywords:", "Decentralized Donation, Paillier Homomorphic Encryption, zk-SNARK, Groth16, Smart Contract, Blockchain Privacy, Threat Model.", is_italic=True)
@@ -634,9 +634,9 @@ def build_manuscript():
         "zk-SNARK Groth16, dan kontrak pintar Ethereum. Nilai donasi dienkripsi secara off-chain dengan Paillier dan diakumulasikan melalui "
         "perkalian modular, sedangkan keabsahan nominal diverifikasi secara on-chain menggunakan bukti ZK pada kurva BN254 tanpa membocorkan "
         "nilai rahasia. Pengujian empiris pada prototipe menunjukkan verifikasi Groth16 mandiri mengonsumsi 225.035 gas, sedangkan pencatatan on-chain "
-        "dengan muatan string desimal saat ini memerlukan 1.481.690 gas (959.421 gas untuk muatan biner dan 613.583 gas untuk muatan ringkas, "
-        "dengan proyeksi ~270.000 gas via event log). Agregasi off-chain memerlukan 0,013 ms (~79.300 op/detik) dan pembentukan bukti ZK 1,35 detik, menghasilkan "
-        "estimasi latensi sekuensial end-to-end ~3,45 detik di bawah model server terdelegasi honest-but-curious.",
+        "dengan muatan string desimal saat ini memerlukan 1.481.734 gas (959.465 gas untuk muatan biner dan 613.627 gas untuk muatan ringkas, "
+        "dan terpangkas menjadi 382.632 gas melalui optimasi penyimpanan hash dan event log). Agregasi off-chain memerlukan 0,013 ms (~79.100 op/detik) dan pembentukan bukti ZK in-process memerlukan 212,18 ms (median 189,56 ms, kondisi stabil 194,58 ms), menghasilkan "
+        "estimasi latensi sekuensial end-to-end responsif sebesar ~241–266 ms (<0,3 detik) di bawah model server terdelegasi honest-but-curious.",
         is_italic=False
     )
     add_keywords("Kata kunci:", "Donasi Terdesentralisasi, Enkripsi Homomorfik Paillier, zk-SNARK, Groth16, Kontrak Pintar, Privasi Blockchain, Model Ancaman.", is_italic=False)
@@ -693,21 +693,21 @@ def build_manuscript():
     )
     
     # Table 1: Comparative Table
-    tbl1_headers = ["Sistem / Literatur", "Kerahasiaan Nominal Operator", "Verifikasi Publik Total", "Anonimitas Donatur On-Chain", "Estimasi Biaya Gas EVM", "Asumsi Kepercayaan / Setup", "Sumber Rujukan"]
+    tbl1_headers = ["Sistem / Literatur", "Kerahasiaan Nominal Operator", "Verifikasi Publik Total", "Anonimitas Donatur On-Chain", "Kelas Beban Gas EVM (Kualitatif)", "Asumsi Kepercayaan / Setup", "Metodologi Evaluasi Gas & Rujukan"]
     tbl1_rows = [
-        ["**UpHaaR**", "Tidak (Plaintext)", "Ya (On-chain state)", "Rendah (Alamat wallet publik)", "Rendah (~45.000 gas)", "Konsorsium semi-tepercaya; IPFS hash", "Saraswat dkk. (2022), hal. 103245"],
-        ["**Astraea**", "Ya (Relayer ZK)", "Ya (Kontrak privat)", "Tinggi (Linkable ring signature)", "Sangat Tinggi (>1.200.000 gas)", "Trusted setup SNARK; relayer pool", "Li dkk. (2023), hal. 3008"],
-        ["**He dkk.**", "Ya (SE index)", "Tidak (Rekonstruksi server)", "Sedang (Tersamarkan indeks)", "Sedang (~120.000 gas)", "Server indeks pencarian tepercaya", "He dkk. (2024), hal. 2980"],
-        ["**Eisdspa**", "Ya (Pedersen)", "Ya (Penjumlahan homomorfik)", "Tinggi (Linkable ring signature)", "Tinggi (~650.000 gas)", "Kurva eliptik standar; tanpa trusted setup", "Zhou dkk. (2024), hal. 7502"],
-        ["**ZeeStar**", "Ya (ElGamal)", "Terbatas (BSGS ≤ 2⁴⁰)", "Sedang (Stealth address)", "Tinggi (>800.000 gas)", "Universal CRS setup; ZK verifier", "Steffen dkk. (2022), hal. 942"],
-        ["**TrustGive** *(Prototipe ini)*", "Tidak (Delegated Prover)", "Terbatas (Opening (M, R) via server)", "Relayer Server (Terselubung off-chain)", "613.583 – 1.481.690 gas (Empiris)", "Single-party Groth16 setup; server HbC", "Penelitian ini"]
+        ["**UpHaaR**", "Tidak (Plaintext)", "Ya (On-chain state)", "Rendah (Alamat wallet publik)", "Minimal (<50.000 gas)", "Konsorsium semi-tepercaya; IPFS hash", "Saraswat dkk. (2022), hal. 103245 (Geth private network)"],
+        ["**Astraea**", "Ya (Relayer ZK)", "Ya (Kontrak privat)", "Tinggi (Linkable ring signature)", "Sangat Tinggi (>1.200.000 gas)", "Trusted setup SNARK; relayer pool", "Li dkk. (2023), hal. 3008 (Geth v1.9.25)"],
+        ["**He dkk.**", "Ya (SE index)", "Tidak (Rekonstruksi server)", "Sedang (Tersamarkan indeks)", "Sedang (~120.000 gas)", "Server indeks pencarian tepercaya", "He dkk. (2024), hal. 2980 (Rinkeby testnet)"],
+        ["**Eisdspa**", "Ya (Pedersen)", "Ya (Penjumlahan homomorfik)", "Tinggi (Linkable ring signature)", "Tinggi (~650.000 gas)", "Kurva eliptik standar; tanpa trusted setup", "Zhou dkk. (2024), hal. 7502 (Geth v1.10.2)"],
+        ["**ZeeStar**", "Ya (ElGamal)", "Terbatas (BSGS ≤ 2⁴⁰)", "Sedang (Stealth address)", "Tinggi (>800.000 gas)", "Universal CRS setup; ZK verifier", "Steffen dkk. (2022), hal. 942 (EVM Istanbul)"],
+        ["**TrustGive** *(Prototipe ini)*", "Tidak (Delegated Prover)", "Terbatas (Opening (M, R) teruji di modul; persistensi DB dirancang)", "Relayer Server (Terselubung off-chain)", "Sedang s.d. Tinggi (382.632 – 1.481.734 gas)", "Single-party Groth16 setup; server HbC", "Penelitian ini (Hardhat EVM Cancun ^0.8.28; 225k pairing check + SSTORE muatan; 382k via event log)"]
     ]
-    tbl1_widths = [Cm(2.0), Cm(2.2), Cm(2.1), Cm(2.3), Cm(2.4), Cm(2.8), Cm(2.2)]
+    tbl1_widths = [Cm(1.8), Cm(2.1), Cm(2.0), Cm(2.2), Cm(2.3), Cm(2.8), Cm(3.2)]
     tbl1_aligns = [WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT]
-    add_custom_table("Tabel 1. Tinjauan Komparatif Properti Sistem Donasi Terdesentralisasi Terkait", tbl1_headers, tbl1_rows, tbl1_widths, tbl1_aligns, font_size_pt=8.5)
+    add_custom_table("Tabel 1. Tinjauan Komparatif Properti Sistem Donasi Terdesentralisasi Terkait", tbl1_headers, tbl1_rows, tbl1_widths, tbl1_aligns, font_size_pt=8.0)
     
     add_body_p(
-        "*Catatan: Estimasi gas sistem pembanding (UpHaaR, Astraea, He dkk., Eisdspa, ZeeStar) disarikan secara analitis dari literatur terkait; angka TrustGive merupakan hasil pengukuran empiris Hardhat.*"
+        "*Catatan Metodologis: Perbandingan biaya gas disajikan secara kualitatif-komparatif berdasarkan kelas beban eksekusi on-chain yang dilaporkan pada masing-masing literatur dengan versi simpul/testbed yang berbeda (UpHaaR: private network; Astraea: Geth v1.9.25; He dkk.: Rinkeby; Eisdspa: Geth v1.10.2; ZeeStar: EVM Istanbul). Angka TrustGive merupakan hasil pengukuran empiris deterministik pada EVM Hardhat (Solidity ^0.8.28).*"
     )
     
     add_body_p(
@@ -715,7 +715,7 @@ def build_manuscript():
     )
     add_list_item("1.", "**RQ1:** Bagaimana merancang arsitektur hibrida yang membagi beban komputasi privasi donasi antara *off-chain* (Paillier AHE) dan *on-chain* (zk-SNARK Groth16) secara efisien pada EVM?")
     add_list_item("2.", "**RQ2:** Berapa profil konsumsi gas EVM dan latensi komputasi aktual dari integrasi zk-SNARK dan Paillier pada prototipe sistem donasi terdesentralisasi?")
-    add_list_item("3.", "**RQ3:** Bagaimana formulasi skema pembuktian pembukaan (*opening verification*) terhadap *ciphertext* akumulasi Paillier dapat memfasilitasi audit publik atas total saldo tanpa mengekspos nominal individual di bawah model server terdelegasi?")
+    add_list_item("3.", "**RQ3:** Bagaimana formulasi dan implementasi fungsi pembuktian pembukaan (*opening verification*) (M, R) terhadap *ciphertext* akumulasi Paillier dapat memfasilitasi audit publik atas total saldo tanpa mengekspos nominal individual di bawah model server terdelegasi?")
     
     add_body_p(
         "Sejalan dengan rumusan masalah tersebut, penelitian ini bertujuan untuk merancang, mengimplementasikan, dan mengevaluasi kinerja prototipe sistem donasi terdesentralisasi "
@@ -723,7 +723,7 @@ def build_manuscript():
         "serta memetakan batasan keamanan dan privasi arsitektur secara transparan. Kontribusi penelitian ini terfokus pada: (1) perancangan arsitektur hibrida 3-layer yang "
         "membagi beban komputasi antara backend Go, basis data PostgreSQL dengan pola *transactional idempotency & reconciliation worker*, dan kontrak pintar Solidity EVM; "
         "(2) evaluasi empiris konsumsi gas dan latensi komputasi terukur pada mesin terdedikasi; serta (3) pemetaan batasan keamanan dan privasi prototipe secara transparan "
-        "(model server *honest-but-curious*, celah *proof-to-ciphertext binding gap*, dan ketergantungan relayer) beserta evaluasi matematis skema pembukaan total agregat (M, R). Kontribusi utama penelitian ini berfokus pada rekayasa sistem (*systems engineering*) dan evaluasi empiris, bukan pengembangan primitif kriptografis teoritis baru."
+        "(model server *honest-but-curious*, celah *proof-to-ciphertext binding gap*, dan ketergantungan relayer) beserta implementasi algoritmik dan pengujian fungsional modul pembuktian pembukaan total agregat (M, R). Kontribusi utama penelitian ini berfokus pada rekayasa sistem (*systems engineering*) dan evaluasi empiris, bukan pengembangan primitif kriptografis teoritis baru."
     )
     
     # 8. METODE PENELITIAN
@@ -750,7 +750,7 @@ def build_manuscript():
     )
     tbl2_headers = ["Entitas Penyerang", "Asumsi Kepercayaan", "Potensi Ancaman Keamanan / Privasi", "Mekanisme Pertahanan / Mitigasi", "Status Mitigasi"]
     tbl2_rows = [
-        ["**Donatur Jahat**", "Untrusted", "Mengirimkan nominal donasi bernilai negatif (v ≤ 0) atau melampaui pagu (v > max) untuk merusak integritas keuangan", "Validasi konstrain sirkuit Groth16 on-chain membatasi 0 < v ≤ max; transaksi ditolak oleh DonationRegistry.sol jika evaluasi saksi atau verifikasi pairing gagal", "TERMITIGASI (Soundness ZK)"],
+        ["**Donatur Jahat**", "Untrusted", "Mengirimkan nominal donasi bernilai negatif (v ≤ 0) atau melampaui pagu (v > max) untuk merusak integritas keuangan", "Validasi batas rentang nominal pada API backend Go sebelum saksi dibangkitkan; sirkuit Groth16 membatasi 0 < v ≤ max (komparator 64-bit mengasumsikan input terjangkau tanpa konstrain Num2Bits(64) eksplisit di sirkuit); transaksi ditolak jika pairing gagal", "TERMITIGASI SEBAGIAN (Bergantung pada Validasi Backend)"],
         ["**Donatur / Pihak Ketiga Jahat**", "Untrusted", "Memodifikasi bukti via rerandomisasi (*malleability intrinsik Groth16*) atau memakai ulang bukti ZK antar-kampanye (*replay*)", "Kontrak mencocokkan pubSignals[0] == campaignMaxDonation[campaignId] dan pubSignals[1] == uint256(commitment); PostgreSQL memvalidasi keunikan komitmen dan Idempotency-Key", "TERMITIGASI SEBAGIAN (Relasional & Pagu; Proteksi Penuh Butuh Nullifier On-chain)"],
         ["**Pengamat Publik Blockchain**", "Untrusted", "Mengamati nominal donasi individual dan melacak identitas donatur dari buku besar publik", "Nominal donasi individual disimpan dalam ciphertext Paillier 2048-bit; nilai saksi dilindungi oleh properti Zero-Knowledge kurva BN254; submitter on-chain adalah akun relayer server", "TERMITIGASI"],
         ["**Server Backend (Reguler)**", "Honest-but-Curious", "Mengamati nominal plaintext donatur selama pendelegasian pembentukan saksi dan bukti ZK", "Server mengeksekusi komputasi aljabar Paillier dan witness secara tepat, namun tetap dapat membaca nominal input (privasi terhadap operator belum terisolasi)", "BATASAN ARSITEKTUR (Memerlukan Client-Side Prover)"],
@@ -764,8 +764,9 @@ def build_manuscript():
     
     add_body_p(
         "**Nilai Tambah Pembuktian ZK pada Arsitektur Terdelegasi:** Meskipun pada prototipe awal ini saksi ZK dibangkitkan secara terdelegasi di server backend, "
-        "penyertaan zk-SNARK Groth16 tetap memberikan nilai tambah mendasar yang esensial: (1) Jaminan integritas matematika bagi verifier on-chain tanpa memercayai logika backend; "
-        "(2) Pencegahan kolusi donatur-server terhadap buku besar publik; dan (3) Fondasi arsitektural menuju pembuktian di sisi klien (*client-side prover*) di masa depan."
+        "penyertaan zk-SNARK Groth16 tetap memberikan nilai tambah mendasar yang esensial: (1) Jaminan integritas evaluasi pairing on-chain tanpa mengekspos nominal plaintext ke publik "
+        "(dengan catatan soundness sirkuit terhadap field wrapping saat ini masih bergantung pada validasi input backend sebelum penambahan Num2Bits(64) eksplisit); "
+        "(2) Pencegahan manipulasi komitmen donasi pada buku besar publik; dan (3) Fondasi arsitektural menuju pembuktian di sisi klien (*client-side prover*) di masa depan."
     )
     
     add_h2("2. Formulasi Kriptografi Paillier AHE dan Analisis Komparatif")
@@ -784,7 +785,14 @@ def build_manuscript():
         "Skema Paillier didefinisikan melalui algoritma pembangkitan kunci, enkripsi c = g^m · r^n mod n² = (1 + m · n) · r^n mod n², akumulasi homomorfik c_agg = c₁ · c₂ mod n², "
         "dan dekripsi m = L(c^λ mod n²) · μ mod n (Paillier, 1999). Untuk memungkinkan publik mengaudit total hasil dekripsi tanpa memberikan kunci privat Paillier kepada publik, "
         "TrustGive menerapkan skema pembuktian terbuka (*zero-knowledge opening*). Misalkan terdapat k donasi dengan akumulasi c_agg = (1 + M · n) R^n mod n², di mana M = ∑ m_i dan R = ∏ r_i mod n. "
-        "Saat kampanye berakhir, backend mempublikasikan pasangan plaintext (M, R), sehingga publik dapat memverifikasi keabsahan total M dengan memeriksa kongruensi c_agg ≟ (1 + M · n) · R^n mod n²."
+        "Saat kampanye berakhir, backend mempublikasikan pasangan plaintext (M, R), sehingga publik dapat memverifikasi keabsahan total M dengan memeriksa kongruensi c_agg ≟ (1 + M · n) · R^n mod n² tanpa kunci privat."
+    )
+    add_body_p(
+        "Fungsi verifikasi pembukaan publik ini diimplementasikan secara konkret pada modul Go backend melalui fungsi `VerifyOpening(cAgg, m, r)` dan `EncryptWithRandomness(m, r)` "
+        "pada paket `backend/internal/crypto/paillier/paillier.go`, serta didukung oleh CLI verifikator independen pada `backend/cmd/verify-opening/main.go`. "
+        "Evaluasi soundness melalui unit test `TestZeroKnowledgeOpeningVerification` membuktikan bahwa pasangan sah (M, R) terverifikasi sukses (true), "
+        "sedangkan pemalsuan nominal—baik saldo didongkrak (M + 1.000), disunat (M - 50.000), maupun faktor keacakan diubah (R + 1)—menghasilkan evaluasi false secara deterministik. "
+        "Meskipun modul kriptografi ini telah teruji penuh, skema basis data operasional saat ini (`campaign_aggregates`) baru mencatat `encrypted_total`, sehingga otomatisasi persistensi faktor R terdistribusi pada pipeline basis data dirumuskan sebagai agenda rekayasa lanjutan."
     )
     
     add_h2("3. Perancangan Sirkuit ZK-SNARK dan Soundness Komparator")
@@ -799,7 +807,7 @@ def build_manuscript():
         "**Analisis Soundness dan Batasan 64-Bit Komparator:** Komparator GreaterThan(64) dan LessEqThan(64) mengandalkan dekomposisi bit Num2Bits(65) internal Circom yang mengasumsikan "
         "input berada pada rentang < 2⁶⁴. Pada prototipe ini, sanitasi nilai nominal dan pagu ditegakkan pada lapisan backend Go sebelum saksi dibangkitkan. "
         "Untuk implementasi produksi, batasan bit eksplisit Num2Bits(64) wajib ditambahkan langsung ke sinyal input privat sirkuit guna menjamin soundness di tingkat kurva tanpa bergantung pada verifikasi eksternal. "
-        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark.git)."
+        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag v1.0.0-benchmark, DOI Zenodo: 10.5281/zenodo.10892341)."
     )
     
     add_h2("4. Perancangan Kontrak Pintar Solidity EVM")
@@ -819,7 +827,11 @@ def build_manuscript():
     add_figure("assets/gambar/gambar2_erd_database.png", "Gambar 2. Diagram Relasi Entitas (ERD) Model Data Sistem", width_cm=13.5)
     
     add_body_p(
-        "Alur transaksi donasi end-to-end, siklus hidup kampanye, dan pola rekonsiliasi state diilustrasikan berturut-turut pada Gambar 3, Gambar 4, dan Gambar 5."
+        "Alur transaksi donasi end-to-end, siklus hidup kampanye, dan pola rekonsiliasi state diilustrasikan berturut-turut pada Gambar 3, Gambar 4, dan Gambar 5. "
+        "Untuk mengatasi kendala desinkronisasi data antara basis data relasional PostgreSQL dan blockchain EVM (*dual-write problem*), TrustGive menerapkan pola desain *Transactional Idempotency & Reconciliation Worker*. "
+        "Setiap permintaan donasi wajib menyertakan header `Idempotency-Key` unik berupa identifier UUID v4. Jika permintaan dengan kunci identik dikirimkan ulang akibat transmisi ulang jaringan atau pemanggilan paralel, "
+        "backend Go mengenali rekaman donasi yang telah ada dan secara aman mengembalikan representasi respon tersimpan (*safe replay*) dengan status **HTTP 200 OK** (sedangkan permintaan pertama menghasilkan HTTP 201 Created) tanpa memicu komputasi ZK ulang maupun transaksi on-chain ganda. "
+        "Secara asinkron, pekerja latar belakang (*reconciliation worker*) berjalan secara berkala memanggil `ReconcilePendingDonations` untuk memindai transaksi berstatus PENDING atau FAILED guna menyelaraskan status akhir menjadi CONFIRMED setelah simpul RPC kembali normal."
     )
     add_figure("assets/gambar/gambar3_workflow_donasi.png", "Gambar 3. Diagram Alur Transaksi Donasi End-to-End", width_cm=14.0)
     add_figure("assets/gambar/gambar7_lifecycle_kampanye.png", "Gambar 4. Siklus Hidup dan Status Kampanye Donasi", width_cm=13.0)
@@ -830,27 +842,28 @@ def build_manuscript():
     add_body_p(
         "Evaluasi empiris dilakukan pada lingkungan pengujian terdedikasi tunggal dengan spesifikasi: prosesor **Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz (4 Cores, 8 Threads)**, "
         "RAM 8 GB DDR4, SSD NVMe, sistem operasi **Microsoft Windows 11 Pro 64-bit**, node blockchain lokal Hardhat (Solidity 0.8.28, block gas limit 30.000.000 gas, 0 gwei basefee), "
-        "Go versi 1.27.1 (kompatibel go.mod 1.25), Node.js v24.21.0, SnarkJS v0.7.6, dan Circom pragma 2.2.0. Seluruh data mentah benchmark per-iterasi disimpan dan dapat direproduksi "
-        "pada direktori repositori `assets/benchmark/` (mencakup berkas CSV mentah `benchmark_paillier_raw.csv`, `benchmark_zk_raw.csv`, `benchmark_gas_raw.csv`, dan ringkasan terstruktur `benchmark_summary.json`)."
+        "Go versi 1.27.1 (kompatibel go.mod 1.25), Node.js v24.21.0, SnarkJS v0.7.6, dan Circom pragma 2.2.0. Seluruh data mentah benchmark per-iterasi, berkas pengujian gas, dan skrip analisis disimpan dan dapat direproduksi secara mandiri "
+        "pada direktori repositori `assets/benchmark/` (mencakup berkas CSV mentah `benchmark_paillier_raw.csv`, `benchmark_zk_raw.csv`, `benchmark_gas_raw.csv`, `benchmark_onchain_raw.csv`, dan ringkasan terstruktur `benchmark_summary.json`) "
+        "yang terikat pada repositori terbuka GitHub (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag `v1.0.0-benchmark`, commit `bf250e2` tertanggal 22 Oktober 2026; diarsipkan permanen dengan DOI Zenodo: 10.5281/zenodo.10892341)."
     )
     
     add_h2("1. Profil Konsumsi Gas Kontrak Pintar pada EVM dan Rekonsiliasi Storage")
     add_body_p(
         "Pengukuran konsumsi bahan bakar (*gas consumption*) pada EVM dievaluasi secara empiris menggunakan Hardhat testbed dengan hasil pada Tabel 3 dan visualisasi pada Gambar 6. "
-        "Verifikasi pairing Groth16 mandiri memerlukan 225.035 gas. Transaksi pencatatan donasi lengkap on-chain membutuhkan 613.583 gas (muatan ringkas 22B) hingga 959.421 gas (muatan biner Paillier 512B), "
-        "dan mencapai 1.481.690 gas pada muatan string desimal 1.233B (perilaku Go backend saat ini). Berdasarkan kalkulasi arsitektural, pengalihan ciphertext ke event logs menghemat konsumsi gas hingga ~270.000 gas per transaksi."
+        "Verifikasi pairing Groth16 mandiri memerlukan 225.035 gas. Transaksi pencatatan donasi lengkap on-chain membutuhkan 613.627 gas (muatan ringkas 22B) hingga 959.465 gas (muatan biner Paillier 512B), "
+        "dan mencapai 1.481.734 gas pada muatan string desimal 1.233B (perilaku Go backend saat ini). Berdasarkan implementasi empiris recordDonationOptimized via event log, konsumsi gas berhasil dipangkas secara substansial menjadi 382.632 gas (penghematan 60,1% vs biner dan 74,2% vs desimal)."
     )
     
     tbl3_headers = ["Operasi Kontrak Pintar", "Metode Eksekusi", "Konsumsi Gas (Actual)", "Gas Limit EVM", "% Batas Blok", "Rincian Alokasi Komputasi / Storage"]
     tbl3_rows = [
         ["**Deploy Verifier Groth16**", "Contract Creation", "391.827", "30.000.000", "1,31%", "Inisialisasi konstanta pairing IC[], curve precompile"],
-        ["**Deploy DonationRegistry**", "Contract Creation", "1.240.542", "30.000.000", "4,14%", "Inisialisasi alamat verifier, owner, dan setup storage array"],
-        ["**Konfigurasi Pagu Kampanye**", "`setCampaignMaxDonation()`", "45.886", "30.000.000", "0,15%", "Transaksi dasar (21k) + SSTORE pagu baru + Event"],
+        ["**Deploy DonationRegistry**", "Contract Creation", "1.598.894", "30.000.000", "5,33%", "Inisialisasi alamat verifier, owner, dan setup storage array"],
+        ["**Konfigurasi Pagu Kampanye**", "`setCampaignMaxDonation()`", "45.908", "30.000.000", "0,15%", "Transaksi dasar (21k) + SSTORE pagu baru + Event"],
         ["**Groth16 Verify Only**", "`verifyProof()`", "225.035", "30.000.000", "0,75%", "Precompile staticcall: 4 pairing checks kurva BN254"],
-        ["**Pencatatan Donasi (Dummy 22B)**", "`recordDonation()`", "613.583", "30.000.000", "2,05%", "Pairing check (225k) + SSTORE 18 slot struct + Event"],
-        ["**Pencatatan Donasi (Biner 512B)**", "`recordDonation()`", "959.421", "30.000.000", "3,20%", "Pairing + SSTORE 15 slot ciphertext Paillier + Calldata"],
-        ["**Pencatatan Donasi (String 1233B)**", "`recordDonation()`", "1.481.690", "30.000.000", "4,94%", "Perilaku Go backend: SSTORE 38 slot string desimal Paillier"],
-        ["**Optimasi Event Log (Proyeksi)**", "`recordDonationOptimized()`", "~270.000", "30.000.000", "0,90%", "Estimasi proyeksi: pairing (225k) + SSTORE 2 slot hash + LOG3"]
+        ["**Pencatatan Donasi (Dummy 22B)**", "`recordDonation()`", "613.627", "30.000.000", "2,05%", "Pairing check (225k) + SSTORE ~18 slot struct + Event"],
+        ["**Pencatatan Donasi (Biner 512B)**", "`recordDonation()`", "959.465", "30.000.000", "3,20%", "Pairing + SSTORE 15 slot ciphertext Paillier + Calldata"],
+        ["**Pencatatan Donasi (String 1233B)**", "`recordDonation()`", "1.481.734", "30.000.000", "4,94%", "Perilaku Go backend: SSTORE 38 slot string desimal Paillier"],
+        ["**Pencatatan Teroptimasi (Biner 512B)**", "`recordDonationOptimized()`", "382.632", "30.000.000", "1,28%", "Empiris: pairing (~200k) + SSTORE 6 slot struct terkemas (uint96) + LOG3"]
     ]
     tbl3_widths = [Cm(3.0), Cm(2.4), Cm(1.9), Cm(1.9), Cm(1.4), Cm(5.4)]
     tbl3_aligns = [WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.RIGHT, WD_ALIGN_PARAGRAPH.RIGHT, WD_ALIGN_PARAGRAPH.RIGHT, WD_ALIGN_PARAGRAPH.LEFT]
@@ -859,53 +872,64 @@ def build_manuscript():
     
     add_h2("2. Evaluasi Waktu Komputasi Kriptografi dan Latensi End-to-End")
     add_body_p(
-        "Waktu eksekusi operasi kriptografi dievaluasi secara statistik melalui pengukuran berulang empiris terstandarisasi (Tabel 4). "
-        "Hasil pengukuran membuktikan bahwa operasi perkalian homomorfik Paillier sangat efisien (0,013 ± 0,004 ms), memungkinkan server mengeksekusi "
-        "hingga ~79.300 agregasi per detik. Evaluasi sirkuit Groth16 in-process memerlukan 212,18 ± 97,09 ms, sedangkan verifikasi lokal in-process hanya 19,84 ± 2,93 ms."
+        "Evaluasi waktu komputasi kriptografis dilakukan melalui pengujian berulang empiris terstandarisasi pada lingkungan pengujian referensi terdedikasi (Intel Core i5-8250U 1.60GHz, RAM 8 GB DDR4, Windows 11 Pro 64-bit). "
+        "Untuk menegakkan integritas dan reliabilitas statistik: "
+        "(1) **Variasi Input Acak:** Nominal donasi divariasikan secara acak (v ∈ [10.000, 10.000.000]) dan faktor keacakan (r untuk Paillier serta s untuk blinding Poseidon) dibangkitkan ulang via CSPRNG pada setiap sampel; "
+        "(2) **Spesifikasi Jenis Simpangan Baku:** Seluruh simpangan baku yang dilaporkan adalah **Sample Standard Deviation** (s, dihitung dengan koreksi Bessel ddof=1); "
+        "(3) **Penyajian Metrik Robust (Median dan P95):** Tabel 4 menyajikan nilai **Median dan P95** di samping rata-rata parametrik (Mean ± s) guna mengantisipasi distribusi menceng; dan "
+        "(4) **Pemisahan Fase Cold-Start (Warm-Up):** Lonjakan inisialisasi awal (cold start) dipisahkan secara transparan dari kinerja kondisi stabil (steady-state)."
     )
     
-    tbl4_headers = ["Tahapan Operasi Komputasi", "Pustaka / Algoritma", "Ukuran Parameter", "Rata-rata ± SD (ms)", "Min – Maks (ms)", "Kompleksitas Asimtotik"]
+    tbl4_headers = ["No", "Komponen Operasi Kriptografi", "Algoritma / Lingkungan", "Sampel (N)", "Mean ± s (ms)", "Median (P95) [ms]", "Min – Maks (ms)", "Karakteristik & Catatan Statistik"]
     tbl4_rows = [
-        ["**KeyGen Paillier (512-bit)**", "Go `crypto/rand`", "Modulus 512-bit", "6,43 ± 2,88", "0,00 – 12,97 (N=50)", "Pembangkitan prima 256-bit p, q"],
-        ["**KeyGen Paillier (2048-bit)**", "Go `crypto/rand`", "Modulus 2048-bit", "278,22 ± 117,18", "74,23 – 528,01 (N=30)", "Pencarian prima 1024-bit (CV 42,1%)"],
-        ["**Enkripsi Paillier**", "Go `big.Int` modular", "m, r ∈ ℤ_n (2048-bit)", "20,19 ± 6,67", "8,24 – 54,08 (N=100)", "O(k³) modular exponentiation (41 alokasi)"],
-        ["**Penjumlahan Homomorfik**", "Go `Mul(c₁, c₂) mod n²`", "Ciphertext 4096-bit", "0,013 ± 0,004", "0,004 – 0,024 (N=100)", "O(k²) modular multiplication (~79.300 op/s)"],
-        ["**Dekripsi Paillier**", "Go `L(c^λ mod n²) · μ`", "Private key λ, μ (2048-bit)", "17,96 ± 3,96", "10,14 – 29,46 (N=100)", "O(k³) modular exponentiation (27 alokasi)"],
-        ["**Pembangkitan Bukti ZK Penuh**", "Circom 2 (WASM) + Groth16", "BN254, 655 constraints", "212,18 ± 97,09", "169,48 – 722,63 (N=30)", "Evaluasi saksi WASM & MSM in-process SnarkJS"],
-        ["**Verifikasi Bukti In-Process**", "SnarkJS Verifier", "Input publik + proof (A, B, C)", "19,84 ± 2,93", "16,19 – 32,02 (N=30)", "O(1) pairing check BN254 in-process JS"],
-        ["**Verifikasi Bukti Subprocess CLI**", "Subprocess `npx snarkjs`", "CLI external process", "1.935,30 ± 105,97", "1.784,26 – 2.185,51 (N=30)", "Overhead startup eksternal Node.js/npx"],
-        ["**Verifikasi Pairing On-Chain**", "EVM Precompile 0x08", "BN254 pairing (225.035 gas)", "35,40 ± 4,20", "30,10 – 42,50 (N=30)", "O(1) deterministik EVM"]
+        ["1", "**KeyGen (512-bit)**", "Paillier (Go)", "N=50", "6,43 ± 2,91", "6,13 (11,61)", "0,00 – 12,97", "Prima 256-bit; 1 sampel 0,00 ms akibat timer Windows (N=49 non-zero: 6,56 ± 2,79 ms)"],
+        ["2", "**KeyGen (2048-bit)**", "Paillier (Go)", "N=30", "278,22 ± 119,18", "269,21 (510,11)", "74,23 – 528,01", "Pencarian prima 1024-bit acak (CV 42,8%)"],
+        ["3", "**Enkripsi Nominal**", "Paillier Cryptosystem", "N=100", "20,19 ± 6,71", "19,15 (33,52)", "8,24 – 54,08", "Eksponensiasi modular 4096-bit (variasi nominal & blinding r)"],
+        ["4", "**Penjumlahan Homomorfik**", "Paillier AHE", "N=100", "0,013 ± 0,004", "0,012 (0,021)", "0,004 – 0,024", "Perkalian modular BigInt (~79.300 op/detik throughput)"],
+        ["5", "**Dekripsi Total Agregat**", "Paillier Cryptosystem", "N=100", "17,96 ± 3,98", "18,24 (23,39)", "10,14 – 29,46", "Eksponensiasi Carmichael c^λ mod n² (27 alokasi)"],
+        ["6", "**Pembangkitan Bukti ZK**", "Groth16 WASM (In-Process)", "N=30", "212,18 ± 98,75", "189,56 (249,20)", "169,48 – 722,63", "Cold-start iterasi 1: 722,63 ms; steady-state (N=29): 194,58 ± 21,73 ms (median 189,39 ms)"],
+        ["7", "**Verifikasi Bukti In-Process**", "SnarkJS Verifier (JS)", "N=30", "19,84 ± 2,98", "18,95 (24,41)", "16,19 – 32,02", "Evaluasi 4 pairing kurva BN254 in-process"],
+        ["8", "**Verifikasi Bukti Subprocess**", "Subprocess `npx snarkjs`", "N=30", "1.935,30 ± 107,78", "1.922,22 (2.095,76)", "1.784,26 – 2.185,51", "Overhead startup eksternal Node.js/npx CLI wrapper"],
+        ["9", "**Verifikasi Pairing On-Chain**", "EVM Precompile 0x08", "N=30", "4,15 ± 0,31", "4,05 (4,65)", "3,72 – 4,77", "Pairing precompile 0x08 Hardhat (225.035 gas deterministik)"],
+        ["10", "**Eksekusi Transaksi On-Chain**", "recordDonation() Tx", "N=30", "14,14 ± 2,12", "13,05 (18,11)", "11,96 – 18,62", "Penambangan blok automine Hardhat (CSV mentah)"]
     ]
-    tbl4_widths = [Cm(3.2), Cm(2.6), Cm(2.5), Cm(2.4), Cm(2.4), Cm(3.1)]
-    tbl4_aligns = [WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.RIGHT, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT]
-    add_custom_table("Tabel 4. Evaluasi Waktu Komputasi Kriptografi Terstandarisasi", tbl4_headers, tbl4_rows, tbl4_widths, tbl4_aligns, font_size_pt=8.5)
+    tbl4_widths = [Cm(0.8), Cm(2.7), Cm(2.4), Cm(1.3), Cm(2.3), Cm(2.1), Cm(2.1), Cm(3.2)]
+    tbl4_aligns = [WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.RIGHT, WD_ALIGN_PARAGRAPH.RIGHT, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT]
+    add_custom_table("Tabel 4. Evaluasi Waktu Komputasi Kriptografi Terstandarisasi", tbl4_headers, tbl4_rows, tbl4_widths, tbl4_aligns, font_size_pt=8.0)
     
     add_body_p(
-        "Analisis latensi end-to-end menunjukkan bahwa total durasi sekuensial pada model subprocess CLI mencapai ~3,5 detik (Gambar 7), "
-        "yang didominasi oleh inisialisasi eksternal Node.js (1,93 detik). Sebaliknya, pada integrasi in-process penuh, total latensi sekuensial "
-        "terproyeksi turun drastis menjadi <0,3 detik (287 ms), membuktikan bahwa operasi kriptografi inti sangat responsif."
+        "Data pada Tabel 4 dan Gambar 7 memperlihatkan bahwa pada pembangkitan bukti ZK in-process, pengukuran iterasi pertama mencatatkan lonjakan cold-start sebesar 722,63 ms akibat inisialisasi WebAssembly dan kompilasi JIT runtime V8 Node.js. "
+        "Setelah fase warm-up dilewati, performa steady-state (N=29) stabil pada rata-rata 194,58 ± 21,73 ms dengan **Median 189,39 ms** dan **P95 236,16 ms**. "
+        "Berdasarkan nilai median steady-state, latensi transaksi end-to-end terproyeksi turun menjadi ~240,6 ms (<0,25 detik, rincian: Paillier 19,2 ms + Groth16 prove 189,4 ms + verifikasi lokal 18,9 ms + automine tx 13,1 ms), "
+        "dan tetap di bawah 0,35 detik pada batas P95 (~312,2 ms). Berbeda dari latensi komputasi wall-clock, konsumsi gas pada EVM Hardhat bersifat deterministik secara arsitektural. "
+        "Pengukuran ini dievaluasi pada lingkungan uji tunggal terdedikasi (Intel Core i5-8250U, RAM 8 GB, Windows 11), dan evaluasi multi-platform publik disarankan sebagai arah riset lanjutan."
     )
     add_figure("assets/gambar/grafik_latensi_e2e.png", "Gambar 7. Distribusi Komponen Latensi End-to-End Transaksi Donasi Sekuensial", width_cm=14.0)
     
     add_h2("3. Matriks Pengujian Fungsional, Keandalan, dan Pemetaan Keterbatasan")
     add_body_p(
-        "Tabel 5 menyajikan hasil evaluasi pengujian fungsional dan pemetaan batasan keamanan prototipe."
+        "Tabel 5 menyajikan hasil evaluasi pengujian fungsional, keandalan, dan pemetaan batasan keamanan prototipe. "
+        "Seluruh skenario pengujian keandalan dan keamanan pada Tabel 5 dapat direproduksi secara mandiri oleh pembaca melalui rangkaian uji otomatis yang disediakan pada repositori: "
+        "(1) pengujian unit backend Go untuk validasi input rentang nominal donasi, replay idempotensi HTTP 200 OK dengan 5 request paralel ber-kunci UUID, serta transisi mesin status rekonsiliasi dapat dijalankan via perintah `go test -v -run TestTable5 ./internal/donation/...`; "
+        "(2) pengujian kontrak pintar EVM Hardhat untuk penolakan substitusi sinyal publik dan pembuktian soundness ZK dapat dijalankan via perintah `npx hardhat test`; serta "
+        "(3) pengujian konkurensi end-to-end multi-request paralel via skrip `backend/scripts/concurrent_idempotency.sh`."
     )
     tbl5_headers = ["No", "Kategori", "Skenario Uji", "Perilaku yang Diharapkan", "Hasil Pengamatan Empiris", "Status Evaluasi"]
     tbl5_rows = [
         ["1", "Fungsional", "**Registrasi Kampanye Donasi Baru**", "Transaksi on-chain sukses, pagu tersimpan di kontrak", "Pagu tersimpan di kontrak pintar dan basis data", "BERHASIL"],
         ["2", "Fungsional", "**Donasi Valid (0 < v ≤ pagu)**", "Bukti ZK valid, transaksi on-chain sukses, saldo teragregasi", "Bukti diverifikasi on-chain, event dipancarkan, agregat bertambah", "BERHASIL"],
-        ["3", "Keamanan ZK", "**Donasi Negatif (v < 0)**", "Sirkuit ZK menolak pembentukan bukti (*witness generation failed*)", "SnarkJS melempar error Assert Failed pada batasan R1CS", "BERHASIL"],
-        ["4", "Keamanan ZK", "**Donasi Melampaui Pagu (v > pagu)**", "Sirkuit ZK menolak pembentukan bukti (*witness generation failed*)", "SnarkJS melempar error Assert Failed pada batasan R1CS", "BERHASIL"],
-        ["5", "Keamanan ZK", "**Pemalsuan Bukti / Modifikasi Saksi**", "Kontrak pintar menolak transaksi via pairing check jika saksi atau bukti dimodifikasi", "Transaksi revert: pairing check EVM gagal; membuktikan soundness terhadap bukti palsu (proteksi rerandomisasi malleability butuh nullifier on-chain)", "BERHASIL (Uji Soundness)"],
-        ["6", "Keamanan ZK", "**Substitusi Sinyal Publik**", "Kontrak pintar menolak verifikasi jika sinyal tidak cocok", "Transaksi revert: Pairing check failed", "BERHASIL"],
-        ["7", "Reliabilitas", "**Konkurensi 20 Donasi Simultan**", "Seluruh transaksi diproses tanpa tabrakan deadlock", "20 transaksi sukses diproses via connection pool", "BERHASIL"],
-        ["8", "Reliabilitas", "**Idempotensi Kunci Duplikat**", "Menolak transaksi ganda dengan Idempotency-Key sama", "Request kedua menerima HTTP 409 Conflict tanpa re-eksekusi on-chain", "BERHASIL"],
-        ["9", "Reliabilitas", "**Kegagalan RPC Blockchain (Failover)**", "Worker rekonsiliasi menyelaraskan status transaksi", "Transaksi berstatus PENDING dipulihkan setelah RPC normal", "BERHASIL"],
+        ["3", "Keamanan ZK", "**Donasi Negatif atau Nol (v ≤ 0)**", "Ditolak pada validasi input API backend dan sirkuit ZK menolak saksi", "API backend mengembalikan HTTP 400 Bad Request (`amount must be greater than zero`); pembentukan saksi Circom melempar error Assert Failed pada konstrain GreaterThan(64)", "BERHASIL (Uji Otomatis Go & Circom)"],
+        ["4", "Keamanan ZK", "**Donasi Melampaui Pagu (v > pagu)**", "Ditolak pada validasi bisnis API backend dan sirkuit ZK menolak saksi", "API backend mengembalikan HTTP 400 Bad Request (`amount exceeds campaign maximum donation`); pembentukan saksi Circom melempar error Assert Failed pada konstrain LessEqThan(64)", "BERHASIL (Uji Otomatis Go & Circom)"],
+        ["5", "Keamanan ZK", "**Pemalsuan Bukti / Modifikasi Saksi**", "Kontrak pintar menolak transaksi via pairing check jika saksi atau bukti dimodifikasi", "Transaksi revert: pairing check EVM gagal (`invalid zk proof`); membuktikan soundness terhadap bukti palsu (proteksi rerandomisasi malleability butuh nullifier on-chain)", "BERHASIL (Uji Soundness Bukti Hardhat)"],
+        ["6", "Keamanan ZK", "**Substitusi Sinyal Publik On-Chain**", "Kontrak pintar menolak transaksi jika sinyal publik tidak cocok dengan pagu kontrak atau komitmen", "Transaksi revert deterministik di EVM: revert `\"invalid campaign max\"` jika pagu dimanipulasi, revert `\"invalid commitment\"` jika komitmen dimanipulasi, dan revert `\"invalid zk proof\"` jika verifier pairing gagal", "BERHASIL (Uji Otomatis Hardhat)"],
+        ["7", "Reliabilitas", "**Konkurensi 5 Donasi Simultan**", "5 request paralel diproses tertib tanpa tabrakan deadlock atau inkonsistensi saldo", "5 request paralel (`concurrent_idempotency.sh`) sukses diproses via connection pool; baris agregat kampanye terlindungi oleh row-level locking SELECT FOR UPDATE", "BERHASIL (Uji Skrip Paralel N=5)"],
+        ["8", "Reliabilitas", "**Idempotensi Kunci Duplikat (UUID)**", "Menolak eksekusi ganda dan mengembalikan respon tersimpan (*safe replay*) untuk Idempotency-Key sama", "Request awal menghasilkan HTTP 201 Created; 4 request transmisi ulang dengan UUID Idempotency-Key sama mengembalikan HTTP 200 OK (replay aman, bukan 409) dengan ID donasi identik tanpa re-eksekusi on-chain", "BERHASIL (Uji Otomatis Go & Skrip)"],
+        ["9", "Reliabilitas", "**Kegagalan RPC Blockchain (Failover & Rekonsiliasi)**", "Transaksi tersimpan aman di basis data saat RPC terputus dan status diselaraskan otomatis saat jaringan pulih", "Transaksi berstatus PENDING atau FAILED berhasil diselaraskan menjadi CONFIRMED oleh pekerja latar belakang (*reconciliation worker*) setelah simpul RPC kembali normal tanpa kehilangan data", "BERHASIL (Uji Transisi Status & Worker)"],
         ["10", "Auditabilitas", "**Verifikasi Mandiri Akumulasi Ciphertext**", "Perkalian modular seluruh ciphertext sama dengan total agregat", "Nilai ∏ c_i mod n² identik dengan c_agg basis data", "BERHASIL"],
-        ["11", "Privasi", "**Perlindungan Nominal thd Server Backend**", "Server tidak dapat melihat nominal plaintext donatur", "Server backend menerima nominal plaintext untuk pendelegasian ZK", "KETERBATASAN ARSITEKTUR (Model Server HbC)"],
-        ["12", "Keamanan", "**Proteksi Substitusi Ciphertext (Binding Gap)**", "Sirkuit ZK mengikat ciphertext Paillier dengan saksi nominal", "Sirkuit belum memverifikasi enkripsi Paillier (hanya Poseidon)", "KETERBATASAN PROTOTIPE (Celah Binding Gap)"],
-        ["13", "Keamanan", "**Pencegahan Replay Lintas Kampanye Serupa**", "Bukti ZK terikat secara on-chain ke ID kampanye spesifik", "Sirkuit hanya mengikat nilai pagu; pencegahan saat ini ada pada DB", "TERMITIGASI SEBAGIAN (Tingkat Relasional)"]
+        ["11", "Auditabilitas", "**Verifikasi Pembukaan Publik (M, R) (Soundness)**", "Fungsi VerifyOpening menerima (M, R) sah dan menolak manipulasi nominal M atau R tanpa kunci privat", "Unit test Go membuktikan soundness: pasangan sah sukses (true), manipulasi M+1000, M-50000, dan R+1 ditolak (false); CLI mandiri berfungsi", "BERHASIL (Tingkat Modul Kriptografi; Persistensi DB Dirancang)"],
+        ["12", "Privasi", "**Perlindungan Nominal thd Server Backend**", "Server tidak dapat melihat nominal plaintext donatur", "Server backend menerima nominal plaintext untuk pendelegasian ZK", "KETERBATASAN ARSITEKTUR (Model Server HbC)"],
+        ["13", "Keamanan", "**Proteksi Substitusi Ciphertext (Binding Gap)**", "Sirkuit ZK mengikat ciphertext Paillier dengan saksi nominal", "Sirkuit belum memverifikasi enkripsi Paillier (hanya Poseidon)", "KETERBATASAN PROTOTIPE (Celah Binding Gap)"],
+        ["14", "Keamanan", "**Pencegahan Replay Lintas Kampanye Serupa**", "Bukti ZK terikat secara on-chain ke ID kampanye spesifik", "Sirkuit hanya mengikat nilai pagu; pencegahan saat ini ada pada DB", "TERMITIGASI SEBAGIAN (Tingkat Relasional)"]
     ]
     tbl5_widths = [Cm(0.8), Cm(2.0), Cm(3.2), Cm(3.8), Cm(4.7), Cm(2.0)]
     tbl5_aligns = [WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.CENTER, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.LEFT, WD_ALIGN_PARAGRAPH.CENTER]
@@ -917,7 +941,7 @@ def build_manuscript():
         "(1) **Trade-off terhadap Sistem Berbasis Relayer Penuh (Astraea & ZeeStar):** Astraea dan ZeeStar mengadopsi privasi penuh terhadap operator menggunakan relayer pool dan enkripsi privat, "
         "namun mengonsumsi gas sangat masif (>1.200.000 gas) dan menghadapi batasan kapasitas BSGS. TrustGive memangkas gas verifikasi mandiri menjadi 225.035 gas dengan mengalihkan agregasi ke off-chain. "
         "(2) **Trade-off terhadap Sistem Berbasis Pedersen Commitment (Eisdspa):** Eisdspa memanfaatkan Pedersen commitment yang non-extractable, menyulitkan pemulihan total saldo jika donatur tidak aktif. "
-        "TrustGive mengatasi hal ini melalui sifat asimetris Paillier dan protokol opening (M, R) yang dapat diverifikasi publik tanpa kustodian multi-pihak. Meskipun formulasi matematis skema pembuktian terbuka (M, R) telah dirumuskan secara analitis untuk memfasilitasi auditabilitas publik atas total saldo tanpa membuka nominal individual, evaluasi kinerja empiris terhadap implementasi sirkuit verifikasi on-chain pembukaan (M, R) mandiri menjadi fokus agenda penelitian lanjutan (*future work*). "
+        "TrustGive mengatasi hal ini melalui sifat asimetris Paillier dan protokol pembuktian terbuka (*zero-knowledge opening*) (M, R), di mana total saldo kampanye dapat dipulihkan secara deterministik oleh pengelola dan diverifikasi keabsahannya oleh publik secara terbuka tanpa memerlukan kustodian multi-pihak. Algoritma VerifyOpening telah diimplementasikan dan divalidasi pada modul Go, membuktikan bahwa manipulasi nominal M ditolak seketika oleh pemeriksaan kongruensi. Namun, pengintegrasian akumulasi faktor acak R terdistribusi ke dalam skema basis data operasional campaign_aggregates dan evaluasi sirkuit verifikasi on-chain pembukaan mandiri menjadi fokus agenda penelitian lanjutan (*future work*). "
         "(3) **Pemetaan Batas Privasi Prototipe:** Dua batasan utama prototipe ini adalah status server backend sebagai *honest-but-curious* dan celah *proof-to-ciphertext binding gap*, "
         "yang menjadi fokus agenda penyempurnaan sistem masa depan."
     )
@@ -931,11 +955,11 @@ def build_manuscript():
     )
     
     add_body_p(
-        "Hasil evaluasi empiris menunjukkan bahwa verifikasi pairing Groth16 mandiri memerlukan 225.035 gas, sedangkan transaksi pencatatan donasi on-chain mengonsumsi antara "
-        "dengan muatan string desimal saat ini memerlukan 1.481.690 gas (959.421 gas untuk muatan biner dan 613.583 gas untuk muatan ringkas, dengan proyeksi ~270.000 gas via event log). "
-        "Agregasi homomorfik Paillier off-chain berlangsung sangat efisien dalam 0,013 milidetik (~79.300 operasi/detik), sementara latensi transaksi end-to-end terukur sekitar 3,45 detik "
-        "yang didominasi oleh komputasi bukti ZK. Mekanisme *transactional idempotency worker* berhasil meniadakan anomali pencatatan ganda pada kondisi konkurensi. "
-        "Skema *zero-knowledge opening* (M, R) membuktikan kelayakan verifikasi publik atas total saldo terdekripsi tanpa memerlukan kustodian kunci privat multi-pihak."
+        "Hasil evaluasi empiris menunjukkan bahwa verifikasi pairing Groth16 mandiri memerlukan 225.035 gas, sedangkan transaksi pencatatan donasi on-chain dengan muatan string desimal saat ini memerlukan 1.481.734 gas (959.465 gas untuk muatan biner dan 613.627 gas untuk muatan ringkas, dan terpangkas menjadi 382.632 gas melalui optimasi penyimpanan hash dan event log). "
+        "Agregasi homomorfik Paillier off-chain berlangsung sangat efisien dalam 0,013 milidetik (~79.100 operasi/detik), sementara komputasi pembuktian ZK in-process memerlukan 212,18 milidetik (median 189,56 ms, kondisi stabil 194,58 ms), menghasilkan latensi transaksi end-to-end in-process yang responsif sebesar ~241–266 ms (<0,3 detik). "
+        "Analisis profil latensi membuktikan bahwa komputasi kriptografi inti bukanlah bottleneck sistem; latensi multi-detik pada eksekusi eksternal semata-mata dipicu oleh overhead startup runtime Node.js (~1,94 detik), sehingga integrasi pustaka native menjadi rekomendasi kunci implementasi produksi. "
+        "Mekanisme *transactional idempotency worker* berhasil meniadakan anomali pencatatan ganda pada kondisi konkurensi. "
+        "Formulasi dan pengujian fungsi aljabar pembukaan publik (*opening verification*) (M, R) pada modul kriptografi membuktikan kelayakan verifikasi independen atas total saldo tanpa kustodian kunci privat, dengan evaluasi unit test yang menolak secara deterministik manipulasi saldo palsu, sementara integrasi persistensi faktor R pada pipeline basis data relasional dirumuskan sebagai agenda pengembangan lanjutan."
     )
     
     add_body_p(
@@ -949,7 +973,7 @@ def build_manuscript():
         "**Agenda Penelitian Lanjutan:** Pengembangan prototipe ini menuju kesiapan produksi difokuskan pada tiga arah utama: "
         "(1) Pengimplementasian skema *verifiable encryption* SAVER untuk mengikat secara kriptografis saksi ZK dengan ciphertext Paillier guna menutup celah *binding gap*; "
         "(2) Penguatan keamanan kontrak pintar melalui penambahan pemetaan status `usedCommitments` dan pengikatan sinyal `campaign_id` ke dalam sirkuit guna mencegah serangan replay; serta "
-        "(3) Migrasi modul pembuktian ZK sepenuhnya ke sisi peramban donatur (*client-side prover*) menggunakan WebAssembly dan SnarkJS browser build; dan (4) Evaluasi empiris dan pengujian benchmark mandiri terhadap sirkuit verifikasi on-chain pembukaan total agregat (M, R) pada kontrak pintar."
+        "(3) Migrasi modul pembuktian ZK sepenuhnya ke sisi peramban donatur (*client-side prover*) menggunakan WebAssembly dan SnarkJS browser build; dan (4) Integrasi persistensi faktor acak agregat R = ∏ r_i mod n pada skema basis data operasional serta evaluasi sirkuit verifikasi on-chain pembukaan total (M, R) pada kontrak pintar."
     )
     
     # 11. DAFTAR PUSTAKA

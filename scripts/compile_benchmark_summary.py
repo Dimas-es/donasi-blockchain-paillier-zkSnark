@@ -152,7 +152,7 @@ def process_benchmarks():
         json.dump(summary, f, indent=2)
     print(f"Summary JSON saved: {summary_path}")
 
-    # 5. Generate Gas Consumption Chart
+    # 5. Generate Gas Consumption Chart (Strictly synchronized with Table 3 and benchmark_gas_raw.csv)
     plt.rcParams['font.sans-serif'] = 'Arial'
     plt.rcParams['font.family'] = 'sans-serif'
     plt.rcParams['figure.dpi'] = 300
@@ -160,36 +160,33 @@ def process_benchmarks():
     fig, ax = plt.subplots(figsize=(9.5, 5))
 
     gas_categories = [
-        'Baseline\nPlaintext',
-        'Baseline\nCommitment',
-        'VerifyProof\nStandalone',
-        'Optimasi Empiris\n(Hash+Event)',
-        'RecordDonation\n(Dummy 22B)',
-        'RecordDonation\n(Biner 512B)',
-        'RecordDonation\n(Desimal 1233B)'
+        'Konfigurasi Pagu\n(setCampaignMax)',
+        'Groth16 Verify\n(verifyProof)',
+        'Pencatatan Optimasi\n(Biner 512B)',
+        'Pencatatan Reguler\n(Dummy 22B)',
+        'Pencatatan Reguler\n(Biner 512B)',
+        'Pencatatan Reguler\n(Desimal 1233B)'
     ]
 
     gas_vals = [
-        45000,
-        68000,
+        45908,
         225035,
         382632,
-        613583,
-        959421,
-        1481690
+        613627,
+        959465,
+        1481734
     ]
 
     gas_colors = [
-        '#95a5a6',  # grey
         '#7f8c8d',  # grey
-        '#3498db',  # blue
-        '#2ecc71',  # green (optimized)
-        '#f39c12',  # orange (dummy)
-        '#e74c3c',  # red (real 512B)
-        '#c0392b'   # dark red (current Go decimal)
+        '#3498db',  # blue (verify only)
+        '#2ecc71',  # green (optimized storage + log)
+        '#f39c12',  # orange (dummy 22B)
+        '#e67e22',  # deep orange (real binary 512B)
+        '#e74c3c'   # red (current decimal string)
     ]
 
-    bars = ax.bar(gas_categories, [v / 1000 for v in gas_vals], color=gas_colors, width=0.6, edgecolor='#2c3e50', linewidth=1)
+    bars = ax.bar(gas_categories, [v / 1000 for v in gas_vals], color=gas_colors, width=0.55, edgecolor='#2c3e50', linewidth=1)
     ax.set_ylabel('Konsumsi Gas (kiloGas / 1.000 Units)', fontsize=11, fontweight='bold', labelpad=8)
     ax.set_title('Profil Konsumsi Gas Kontrak Pintar pada EVM Hardhat (Empiris)', fontsize=12, fontweight='bold', pad=14)
     ax.grid(axis='y', linestyle='--', alpha=0.5)
@@ -215,40 +212,44 @@ def process_benchmarks():
     plt.close()
     print(f"Gas chart saved: {gas_chart_path}")
 
-    # 6. Generate Latency Chart
-    # Use real empirical data from summary
-    enc_ms = summary["crypto_operations"].get("Encrypt-2048", {}).get("mean_ms", 20.19)
-    prove_ms = summary["crypto_operations"].get("fullprove_wasm_groth16", {}).get("mean_ms", 212.18)
-    v_in_ms = summary["crypto_operations"].get("verify_in_process_js", {}).get("mean_ms", 19.84)
-    v_cli_ms = summary["crypto_operations"].get("verify_subprocess_npx", {}).get("mean_ms", 1935.30)
-    v_onchain_ms = summary["onchain_timing"].get("verifyProof_pairing_precompile_0x08", {}).get("mean_ms", 4.15)
-    tx_onchain_ms = summary["onchain_timing"].get("recordDonation_tx_automine", {}).get("mean_ms", 14.14)
+    # 6. Generate Latency Chart (End-to-End In-Process, without double-counting on-chain pairing)
+    # Median steady-state metrics:
+    med_enc = summary["crypto_operations"].get("Encrypt-2048", {}).get("median_ms", 19.15)
+    med_prove = summary["crypto_operations"].get("fullprove_wasm_groth16", {}).get("steady_state", {}).get("median_ms", 189.39)
+    med_verify = summary["crypto_operations"].get("verify_in_process_js", {}).get("median_ms", 18.95)
+    med_tx = summary["onchain_timing"].get("recordDonation_tx_automine", {}).get("median_ms", 13.05)
+    v_pairing = summary["onchain_timing"].get("verifyProof_pairing_precompile_0x08", {}).get("median_ms", 4.05)
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.5), gridspec_kw={'width_ratios': [1.3, 1]})
+    # Mean metrics for comparison:
+    mean_enc = summary["crypto_operations"].get("Encrypt-2048", {}).get("mean_ms", 20.19)
+    mean_prove_ss = summary["crypto_operations"].get("fullprove_wasm_groth16", {}).get("steady_state", {}).get("mean_ms", 194.58)
+    mean_verify = summary["crypto_operations"].get("verify_in_process_js", {}).get("mean_ms", 19.84)
+    mean_tx = summary["onchain_timing"].get("recordDonation_tx_automine", {}).get("mean_ms", 14.14)
 
-    latency_components = [
-        f'Enkripsi Paillier 2048-bit\n({enc_ms:.1f} ms)',
-        f'Groth16 Prover WASM\n({prove_ms:.1f} ms)',
-        f'Verifikasi ZK In-Process\n({v_in_ms:.1f} ms)',
-        f'Pairing Check EVM 0x08\n({v_onchain_ms:.1f} ms)',
-        f'Automine Tx Hardhat\n({tx_onchain_ms:.1f} ms)'
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10.5, 4.8), gridspec_kw={'width_ratios': [1.3, 1]})
+
+    latency_labels = [
+        f'Enkripsi Paillier (2048-bit)\n[Median: {med_enc:.2f} ms | Mean: {mean_enc:.2f} ms]',
+        f'Groth16 Prover WASM (Steady)\n[Median: {med_prove:.2f} ms | Mean: {mean_prove_ss:.2f} ms]',
+        f'Verifikasi ZK In-Process\n[Median: {med_verify:.2f} ms | Mean: {mean_verify:.2f} ms]',
+        f'Transaksi On-Chain Automine*\n[Median: {med_tx:.2f} ms | Mean: {mean_tx:.2f} ms]'
     ]
 
-    latency_ms = [enc_ms, prove_ms, v_in_ms, v_onchain_ms, tx_onchain_ms]
-    chart_colors = ['#3498db', '#f39c12', '#2ecc71', '#9b59b6', '#1abc9c']
+    latency_vals = [med_enc, med_prove, med_verify, med_tx]
+    chart_colors = ['#3498db', '#f39c12', '#2ecc71', '#1abc9c']
 
-    y_pos = np.arange(len(latency_components))
-    bars_h = ax1.barh(y_pos, latency_ms, color=chart_colors, edgecolor='#2c3e50', height=0.6)
+    y_pos = np.arange(len(latency_labels))
+    bars_h = ax1.barh(y_pos, latency_vals, color=chart_colors, edgecolor='#2c3e50', height=0.55)
     ax1.set_yticks(y_pos)
-    ax1.set_yticklabels([c.split('\n')[0] for c in latency_components], fontsize=9)
+    ax1.set_yticklabels([c.split('\n')[0] for c in latency_labels], fontsize=9)
     ax1.invert_yaxis()
-    ax1.set_xlabel('Waktu Latensi (Milidetik)', fontsize=10, fontweight='bold')
-    ax1.set_title('Komponen Latensi Transaksi In-Process (Empiris)', fontsize=11, fontweight='bold')
+    ax1.set_xlabel('Waktu Latensi Median (Milidetik)', fontsize=10, fontweight='bold')
+    ax1.set_title('Komponen Latensi Transaksi In-Process (Median Steady-State)', fontsize=10.5, fontweight='bold')
     ax1.grid(axis='x', linestyle='--', alpha=0.5)
 
-    for bar, val in zip(bars_h, latency_ms):
+    for bar, val in zip(bars_h, latency_vals):
         ax1.text(
-            bar.get_width() + 4,
+            bar.get_width() + 3,
             bar.get_y() + bar.get_height() / 2.0,
             f'{val:.2f} ms',
             va='center',
@@ -257,10 +258,12 @@ def process_benchmarks():
             fontweight='bold',
             color='#2c3e50'
         )
-    ax1.set_xlim(0, max(latency_ms) * 1.25)
+    ax1.set_xlim(0, max(latency_vals) * 1.25)
+    ax1.annotate('*Termasuk verifikasi pairing on-chain precompile 0x08 (4,05 ms)',
+                 xy=(0.02, -0.15), xycoords='axes fraction', fontsize=7.5, fontstyle='italic', color='#555555')
 
     wedges, texts, autotexts = ax2.pie(
-        latency_ms,
+        latency_vals,
         labels=None,
         autopct='%1.1f%%',
         pctdistance=0.75,
@@ -273,16 +276,16 @@ def process_benchmarks():
         autotext.set_fontsize(8.5)
         autotext.set_fontweight='bold'
 
-    total_in_process = sum(latency_ms)
-    ax2.set_title(f'Proporsi Latensi In-Process\n(~{total_in_process:.1f} ms / ~{total_in_process/1000:.2f} s)', fontsize=11, fontweight='bold')
+    total_median = sum(latency_vals)
+    total_mean_ss = mean_enc + mean_prove_ss + mean_verify + mean_tx
+    ax2.set_title(f'Total Latensi In-Process Terukur\n~{total_median:.1f} ms (Median) | ~{total_mean_ss:.1f} ms (Mean)', fontsize=10.5, fontweight='bold')
     ax2.legend(
         wedges,
         [
-            f'Enkripsi Paillier ({enc_ms:.1f} ms)',
-            f'Groth16 Prover ({prove_ms:.1f} ms)',
-            f'Verifikasi In-Process ({v_in_ms:.1f} ms)',
-            f'Pairing Check 0x08 ({v_onchain_ms:.1f} ms)',
-            f'Automine Tx ({tx_onchain_ms:.1f} ms)'
+            f'Paillier Enc ({med_enc:.1f} ms)',
+            f'Groth16 Prover ({med_prove:.1f} ms)',
+            f'Verifikasi ZK ({med_verify:.1f} ms)',
+            f'Automine Tx* ({med_tx:.1f} ms)'
         ],
         title="Komponen Transaksi",
         loc="center left",

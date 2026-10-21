@@ -818,7 +818,7 @@ def build_manuscript():
         "**Analisis Soundness dan Batasan 64-Bit Komparator:** Komparator GreaterThan(64) dan LessEqThan(64) mengandalkan dekomposisi bit Num2Bits(65) internal Circom yang mengasumsikan "
         "input berada pada rentang < 2⁶⁴. Pada prototipe ini, sanitasi nilai nominal dan pagu ditegakkan pada lapisan backend Go sebelum saksi dibangkitkan. "
         "Untuk implementasi produksi, batasan bit eksplisit Num2Bits(64) wajib ditambahkan langsung ke sinyal input privat sirkuit guna menjamin soundness di tingkat kurva tanpa bergantung pada verifikasi eksternal. "
-        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag v1.0.0-benchmark, commit a764788)."
+        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag v1.0.0-benchmark, commit 618a918)."
     )
     
     add_h2("4. Perancangan Kontrak Pintar Solidity EVM")
@@ -855,7 +855,7 @@ def build_manuscript():
         "RAM 8 GB DDR4, SSD NVMe, sistem operasi **Microsoft Windows 11 Pro 64-bit**, node blockchain lokal Hardhat (Solidity 0.8.28, block gas limit 30.000.000 gas, 0 gwei basefee), "
         "Go versi 1.27.1 (kompatibel go.mod 1.25), Node.js v24.21.0, SnarkJS v0.7.6, dan Circom pragma 2.2.0. Seluruh data mentah benchmark per-iterasi, berkas pengujian gas, dan skrip analisis disimpan dan dapat direproduksi secara mandiri "
         "pada direktori repositori `assets/benchmark/` (mencakup berkas CSV mentah `benchmark_paillier_raw.csv`, `benchmark_zk_raw.csv`, `benchmark_gas_raw.csv`, `benchmark_onchain_raw.csv`, dan ringkasan terstruktur `benchmark_summary.json`) "
-        "yang terikat pada repositori terbuka GitHub (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag `v1.0.0-benchmark`, commit `a764788` tertanggal 22 Oktober 2026)."
+        "yang terikat pada repositori terbuka GitHub (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag `v1.0.0-benchmark`, commit `618a918` tertanggal 22 Oktober 2026)."
     )
     
     add_h2("1. Profil Konsumsi Gas Kontrak Pintar pada EVM dan Rekonsiliasi Storage")

@@ -372,9 +372,9 @@ def build_manuscript():
         p.paragraph_format.left_indent = Pt(26.5)       # 530 dxa
         p.paragraph_format.right_indent = Pt(31.8)      # 637 dxa
         p.paragraph_format.first_line_indent = Pt(33.8) # 676 dxa
-        p.paragraph_format.space_before = Pt(6)         # 137 dxa
+        p.paragraph_format.space_before = Pt(4)
         p.paragraph_format.space_after = Pt(0)
-        p.paragraph_format.line_spacing = 1.5
+        p.paragraph_format.line_spacing = 1.0
         
         runs = parse_markdown_runs(text)
         for t, is_bold, is_italic in runs:
@@ -391,7 +391,7 @@ def build_manuscript():
         return p
 
     def add_list_item(num_prefix, text, level=1):
-        # List items in template: List Paragraph, hanging indent, 1.5 line spacing
+        # List items in template: List Paragraph, hanging indent, single-spaced as required by SIMASI
         p = doc.add_paragraph(style='List Paragraph')
         p.alignment = WD_ALIGN_PARAGRAPH.JUSTIFY
         p.paragraph_format.left_indent = Pt(40.7 if level == 1 else 54.9) # Base 26.5 pt + 14.2 pt hanging
@@ -399,7 +399,7 @@ def build_manuscript():
         p.paragraph_format.first_line_indent = Pt(-14.2)
         p.paragraph_format.space_before = Pt(2)
         p.paragraph_format.space_after = Pt(0)
-        p.paragraph_format.line_spacing = 1.5
+        p.paragraph_format.line_spacing = 1.0
             
         r_num = p.add_run(num_prefix + ' ')
         r_num.font.name = 'Times New Roman'
@@ -423,7 +423,7 @@ def build_manuscript():
         return p
 
     def add_figure(img_rel_path, caption_text, width_cm=14.0):
-        # Figure in template: Centered image, followed by Centered 12pt Caption below image
+        # Figure in template: Centered image, followed by Centered 12pt Caption below image (single-spaced)
         if os.path.exists(img_rel_path):
             p_img = doc.add_paragraph(style='Body Text')
             p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
@@ -439,7 +439,7 @@ def build_manuscript():
             p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
             p_cap.paragraph_format.space_before = Pt(3)
             p_cap.paragraph_format.space_after = Pt(8)
-            p_cap.paragraph_format.line_spacing = 1.15
+            p_cap.paragraph_format.line_spacing = 1.0
             p_cap.paragraph_format.first_line_indent = Cm(0)
             
             dot_idx = caption_text.find('.')
@@ -476,7 +476,7 @@ def build_manuscript():
         p_cap.alignment = WD_ALIGN_PARAGRAPH.CENTER
         p_cap.paragraph_format.space_before = Pt(8)
         p_cap.paragraph_format.space_after = Pt(3)
-        p_cap.paragraph_format.line_spacing = 1.15
+        p_cap.paragraph_format.line_spacing = 1.0
         p_cap.paragraph_format.first_line_indent = Cm(0)
         p_cap.paragraph_format.keep_with_next = True
         
@@ -996,10 +996,10 @@ def build_manuscript():
         "Babel, M., & Sedlmeir, J. (2023). Bringing data minimization to digital wallets at scale with general-purpose zero-knowledge proofs. *arXiv preprint arXiv:2301.00823*. https://doi.org/10.48550/arXiv.2301.00823",
         "Bünz, B., Agrawal, S., Zamani, M., & Boneh, D. (2020). Zether: Towards privacy in a smart contract world. *Financial Cryptography and Data Security (FC 2020)*, LNCS 12059, 423–443. https://doi.org/10.1007/978-3-030-51280-4_14",
         "Burgos, A., & Alchieri, E. (2025). Privacy-preserving smart contracts for permissioned blockchains: A zk-SNARK-based recipe part-1. *arXiv preprint arXiv:2501.03391*. https://doi.org/10.48550/arXiv.2501.03391",
-        "Chaliasos, S., Ernstberger, J., Wong, D., Jovanovic, P., & Livshits, B. (2024). SoK: What don't we know? Understanding security vulnerabilities in SNARKs. *Proceedings of the 33rd USENIX Security Symposium (USENIX Security 24)*, 494–511.",
+        "Chaliasos, S., Ernstberger, J., Wong, D., Jovanovic, P., & Livshits, B. (2024). SoK: What don't we know? Understanding security vulnerabilities in SNARKs. *Proceedings of the 33rd USENIX Security Symposium (USENIX Security 24)*, 494–511. https://www.usenix.org/conference/usenixsecurity24/presentation/chaliasos",
         "Christ, M., Baldimtsi, F., Chalkias, K., & Roy, A. (2024). SoK: Zero-knowledge range proofs. *6th Conference on Advances in Financial Technologies (AFT 2024)*, LIPIcs 316, 8:1–8:24. https://doi.org/10.4230/LIPIcs.AFT.2024.8",
         "Damle, S., Gujar, S., & Moti, M. H. (2021). FASTEN: Fair and secure distributed voting using smart contracts. *arXiv preprint arXiv:2102.10594*. https://doi.org/10.48550/arXiv.2102.10594",
-        "Grassi, L., Khovratovich, D., Rechberger, C., Roy, A., & Schofnegger, M. (2021). Poseidon: A new hash function for zero-knowledge proof systems. *Proceedings of the 30th USENIX Security Symposium (USENIX Security 21)*, 519–535.",
+        "Grassi, L., Khovratovich, D., Rechberger, C., Roy, A., & Schofnegger, M. (2021). Poseidon: A new hash function for zero-knowledge proof systems. *Proceedings of the 30th USENIX Security Symposium (USENIX Security 21)*, 519–535. https://www.usenix.org/conference/usenixsecurity21/presentation/grassi",
         "Groth, J. (2016). On the size of pairing-based non-interactive arguments. *Advances in Cryptology – EUROCRYPT 2016*, LNCS 9666, 305–326. https://doi.org/10.1007/978-3-662-49896-5_11",
         "Habib, M. A. (2025). Analyzing performance bottlenecks in zero-knowledge proof based rollups on Ethereum. *arXiv preprint arXiv:2503.22709*. https://doi.org/10.48550/arXiv.2503.22709",
         "Lavin, R., Liu, X., Mohanty, H., de la Rocha, A. S., & Xu, M. (2024). A survey on the applications of zero-knowledge proofs. *arXiv preprint arXiv:2408.00243*. https://doi.org/10.48550/arXiv.2408.00243",
@@ -1009,7 +1009,7 @@ def build_manuscript():
         "Paillier, P. (1999). Public-key cryptosystems based on composite degree residuosity classes. *Advances in Cryptology – EUROCRYPT '99*, LNCS 1592, 223–238. https://doi.org/10.1007/3-540-48910-X_16",
         "Quintero-Narvaez, C. E., et al. (2023). Zero-knowledge proofs for questionnaire result verification in smart contracts. *arXiv preprint arXiv:2310.13618*. https://doi.org/10.48550/arXiv.2310.13618",
         "Ren, J., et al. (2021). Cloak: Enabling confidential smart contract with multi-party transactions. *arXiv preprint arXiv:2106.13926*. https://doi.org/10.48550/arXiv.2106.13926",
-        "Republik Indonesia. (2022). Undang-Undang Republik Indonesia Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi. *Lembaran Negara Republik Indonesia Tahun 2022 Nomor 196*. Jakarta: Sekretariat Negara.",
+        "Republik Indonesia. (2022). Undang-Undang Republik Indonesia Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi. *Lembaran Negara Republik Indonesia Tahun 2022 Nomor 196*. Jakarta: Sekretariat Negara. https://peraturan.go.id/id/uu-no-27-tahun-2022",
         "Sameera, K. M., Nicolazzo, S., Arazzi, M., Nocera, A., Vinod, P., & Conti, M. (2024). Privacy-preserving in blockchain-based federated learning systems: A survey. *Computer Communications*, 222, 150–166. https://doi.org/10.1016/j.comcom.2024.04.024",
         "Steffen, S., Bichsel, B., Baumgartner, R., & Vechev, M. (2022). ZeeStar: Private smart contracts by homomorphic encryption and zero-knowledge proofs. *Proceedings of the 2022 IEEE Symposium on Security and Privacy (S&P 2022)*, 936–953. https://doi.org/10.1109/SP46214.2022.9833633",
         "Unsal, M. S. (2025). Blockchain and stablecoin integration for crowdfunding: A framework for enhanced efficiency, security, and liquidity. *arXiv preprint arXiv:2501.11145*. https://doi.org/10.48550/arXiv.2501.11145",
@@ -1025,13 +1025,13 @@ def build_manuscript():
         p_ref.paragraph_format.first_line_indent = Pt(-28.35) # -1.0 cm, so first line starts at 26.5 pt flush with Heading 1
         p_ref.paragraph_format.space_before = Pt(1)
         p_ref.paragraph_format.space_after = Pt(3)
-        p_ref.paragraph_format.line_spacing = 1.15
+        p_ref.paragraph_format.line_spacing = 1.0
         
         runs = parse_markdown_runs(ref)
         for t, is_bold, is_italic in runs:
             r = p_ref.add_run(t)
             r.font.name = 'Times New Roman'
-            r.font.size = Pt(10)
+            r.font.size = Pt(11)
             force_black_color(r)
             if is_bold:
                 r.bold = True

@@ -985,7 +985,7 @@ def build_manuscript():
     
     add_body_p(
         "**Agenda Penelitian Lanjutan:** Pengembangan prototipe ini menuju kesiapan produksi difokuskan pada tiga arah utama: "
-        "(1) Pengimplementasian skema *verifiable encryption* SAVER (Lee dkk., 2020) untuk mengikat secara kriptografis saksi ZK dengan ciphertext Paillier guna menutup celah *binding gap*; "
+        "(1) Pengimplementasian skema *verifiable encryption* SAVER (Lee dkk., 2019) untuk mengikat secara kriptografis saksi ZK dengan ciphertext Paillier guna menutup celah *binding gap*; "
         "(2) Penguatan keamanan kontrak pintar melalui penambahan pemetaan status `usedCommitments` dan pengikatan sinyal `campaign_id` ke dalam sirkuit guna mencegah serangan replay; serta "
         "(3) Migrasi modul pembuktian ZK sepenuhnya ke sisi peramban donatur (*client-side prover*) menggunakan WebAssembly dan SnarkJS browser build; dan (4) Integrasi persistensi faktor acak agregat R = ∏ r_i mod n pada skema basis data operasional serta evaluasi sirkuit verifikasi on-chain pembukaan total (M, R) pada kontrak pintar."
     )
@@ -1006,7 +1006,7 @@ def build_manuscript():
         "Habib, M. A. (2025). Analyzing performance bottlenecks in zero-knowledge proof based rollups on Ethereum. *arXiv preprint arXiv:2503.22709*. https://doi.org/10.48550/arXiv.2503.22709",
         "He, B., Feng, T., Fang, J., Liu, C., & Su, C. (2024). A secure and efficient charitable donation system based on Ethereum blockchain and searchable encryption. *IEEE Transactions on Consumer Electronics*, 70(1), 2977–2987. https://doi.org/10.1109/TCE.2023.3323356",
         "Lavin, R., Liu, X., Mohanty, H., de la Rocha, A. S., & Xu, M. (2024). A survey on the applications of zero-knowledge proofs. *arXiv preprint arXiv:2408.00243*. https://doi.org/10.48550/arXiv.2408.00243",
-        "Lee, J., Choi, H., Kim, J., & Oh, H. (2020). SAVER: SNARK-friendly, additively-homomorphic, and verifiable encryption with rerandomization. *Advances in Cryptology – PKC 2020*, LNCS 12111, 97–123. https://doi.org/10.1007/978-3-030-45388-6_4",
+        "Lee, J., Choi, J., Kim, J., & Oh, H. (2019). SAVER: SNARK-friendly, additively-homomorphic, and verifiable encryption and decryption with rerandomization. *Cryptology ePrint Archive*, Report 2019/1270. https://eprint.iacr.org/2019/1270",
         "Li, M., Chen, Y., Zhu, L., Zhang, Z., Ni, J., & Conti, M. (2023). Astraea: Anonymous and secure auditing based on private smart contracts for donation systems. *IEEE Transactions on Dependable and Secure Computing*, 20(4), 3002–3018. https://doi.org/10.1109/TDSC.2022.3204287",
         "Morais, E., Koens, T., van Wijk, C., & Koren, A. (2020). A survey on zero knowledge range proofs and applications. *arXiv preprint arXiv:1907.06381*. https://doi.org/10.48550/arXiv.1907.06381",
         "Muñoz-Tapia, J. L., Bellés-Muñoz, M., Isabel, M., & Rubio, A. (2022). CIRCOM: A robust and scalable language for building complex zero-knowledge circuits. *TechRxiv*, preprint. https://doi.org/10.36227/techrxiv.19374986.v1",

@@ -629,7 +629,7 @@ def build_manuscript():
         "Empirical evaluations on the prototype show that standalone Groth16 verification consumes 225,035 gas, while on-chain recording under "
         "the current decimal string payload consumes 1,481,734 gas (959,465 gas for binary and 613,627 gas for compact payloads, reduced to "
         "382,632 gas via the implemented event-log hash storage optimization). Off-chain addition takes 0.013 ms (~79,100 op/s) and in-process Groth16 proof generation requires 212.18 ms (median 189.56 ms, steady-state 194.58 ms), achieving a responsive in-process sequential end-to-end "
-        "latency of ~240.6 ms (steady-state median, <0.25 s; ~248.8 ms mean) under a delegated honest-but-curious server model.",
+        "latency of ~240.5 ms (steady-state median, <0.25 s; ~248.8 ms mean) under a delegated honest-but-curious server model.",
         is_italic=True
     )
     add_keywords("Keywords:", "Decentralized Donation, Paillier Homomorphic Encryption, zk-SNARK, Groth16, Smart Contract, Blockchain Privacy, Threat Model.", is_italic=True)
@@ -647,7 +647,7 @@ def build_manuscript():
         "nilai rahasia. Pengujian empiris pada prototipe menunjukkan verifikasi Groth16 mandiri mengonsumsi 225.035 gas, sedangkan pencatatan on-chain "
         "dengan muatan string desimal saat ini memerlukan 1.481.734 gas (959.465 gas untuk muatan biner dan 613.627 gas untuk muatan ringkas, "
         "dan terpangkas menjadi 382.632 gas melalui optimasi penyimpanan hash dan event log). Agregasi off-chain memerlukan 0,013 ms (~79.100 op/detik) dan pembentukan bukti ZK in-process memerlukan 212,18 ms (median 189,56 ms, kondisi stabil 194,58 ms), menghasilkan "
-        "estimasi latensi sekuensial end-to-end responsif sebesar ~240,6 ms (median kondisi stabil, <0,25 detik; ~248,8 ms rata-rata) di bawah model server terdelegasi honest-but-curious.",
+        "estimasi latensi sekuensial end-to-end responsif sebesar ~240,5 ms (median kondisi stabil, <0,25 detik; ~248,8 ms rata-rata) di bawah model server terdelegasi honest-but-curious.",
         is_italic=False
     )
     add_keywords("Kata kunci:", "Donasi Terdesentralisasi, Enkripsi Homomorfik Paillier, zk-SNARK, Groth16, Kontrak Pintar, Privasi Blockchain, Model Ancaman.", is_italic=False)
@@ -818,7 +818,7 @@ def build_manuscript():
         "**Analisis Soundness dan Batasan 64-Bit Komparator:** Komparator GreaterThan(64) dan LessEqThan(64) mengandalkan dekomposisi bit Num2Bits(65) internal Circom yang mengasumsikan "
         "input berada pada rentang < 2⁶⁴. Pada prototipe ini, sanitasi nilai nominal dan pagu ditegakkan pada lapisan backend Go sebelum saksi dibangkitkan. "
         "Untuk implementasi produksi, batasan bit eksplisit Num2Bits(64) wajib ditambahkan langsung ke sinyal input privat sirkuit guna menjamin soundness di tingkat kurva tanpa bergantung pada verifikasi eksternal. "
-        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag v1.0.0-benchmark, commit 618a918)."
+        "Setup parameter Groth16 dieksekusi secara lokal menggunakan SnarkJS dengan fase 1 Powers of Tau BN254 standar dan fase 2 khusus sirkuit DonationProof. Seluruh berkas sirkuit .circom, .zkey, dan verifier Solidity disimpan secara terbuka pada repositori penelitian (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag v1.0.0-benchmark, commit 7abb436)."
     )
     
     add_h2("4. Perancangan Kontrak Pintar Solidity EVM")
@@ -839,13 +839,15 @@ def build_manuscript():
     
     add_body_p(
         "Alur transaksi donasi end-to-end, siklus hidup kampanye, dan pola rekonsiliasi state diilustrasikan berturut-turut pada Gambar 3, Gambar 4, dan Gambar 5. "
+        "Pada alur transaksi donasi (Gambar 3), donatur hanya memasukkan nominal donasi v pada antarmuka web, sementara pembangkitan faktor acak blinding, pembentukan saksi Poseidon, komputasi bukti Groth16, dan enkripsi Paillier didelegasikan ke modul server sebelum memanggil transaksi on-chain `recordDonation(campaignId, commitment, encryptedAmount, proof)`. "
+        "Pada siklus hidup kampanye (Gambar 4), implementasi operasional basis data sistem saat ini mengelola dua status utama, yaitu 'active' (menerima donasi terverifikasi ZK dan agregasi homomorfik Paillier) dan 'closed' (penerimaan donasi ditutup permanen). Tahapan registrasi pagu on-chain via setCampaignMaxDonation(), penutupan kampanye, dekripsi agregat total M oleh pengelola kunci privat, serta verifikasi pembukaan publik (M, R) via fungsi VerifyOpening merepresentasikan alur tata kelola siklus hidup kampanye secara end-to-end. "
         "Untuk mengatasi kendala desinkronisasi data antara basis data relasional PostgreSQL dan blockchain EVM (*dual-write problem*), TrustGive menerapkan pola desain *Transactional Idempotency & Reconciliation Worker*. "
         "Setiap permintaan donasi wajib menyertakan header `Idempotency-Key` unik berupa identifier UUID v4. Jika permintaan dengan kunci identik dikirimkan ulang akibat transmisi ulang jaringan atau pemanggilan paralel, "
         "backend Go mengenali rekaman donasi yang telah ada dan secara aman mengembalikan representasi respon tersimpan (*safe replay*) dengan status **HTTP 200 OK** (sedangkan permintaan pertama menghasilkan HTTP 201 Created) tanpa memicu komputasi ZK ulang maupun transaksi on-chain ganda. "
         "Secara asinkron, pekerja latar belakang (*reconciliation worker*) berjalan secara berkala memanggil `ReconcilePendingDonations` untuk memindai transaksi berstatus PENDING atau FAILED guna menyelaraskan status akhir menjadi CONFIRMED setelah simpul RPC kembali normal."
     )
     add_figure("assets/gambar/gambar3_workflow_donasi.png", "Gambar 3. Diagram Alur Transaksi Donasi End-to-End", width_cm=14.0)
-    add_figure("assets/gambar/gambar7_lifecycle_kampanye.png", "Gambar 4. Siklus Hidup dan Status Kampanye Donasi", width_cm=13.0)
+    add_figure("assets/gambar/gambar7_lifecycle_kampanye.png", "Gambar 4. Siklus Hidup Status Kampanye Donasi (Status Operasional Sistem dan Alur Rekonsiliasi Audit)", width_cm=13.0)
     add_figure("assets/gambar/gambar5_alur_idempotensi_recovery.png", "Gambar 5. Alur Logika Idempotensi dan Rekonsiliasi State Transaksi", width_cm=13.5)
     
     # 9. HASIL DAN PEMBAHASAN
@@ -855,7 +857,7 @@ def build_manuscript():
         "RAM 8 GB DDR4, SSD NVMe, sistem operasi **Microsoft Windows 11 Pro 64-bit**, node blockchain lokal Hardhat (Solidity 0.8.28, block gas limit 30.000.000 gas, 0 gwei basefee), "
         "Go versi 1.27.1 (kompatibel go.mod 1.25), Node.js v24.21.0, SnarkJS v0.7.6, dan Circom pragma 2.2.0. Seluruh data mentah benchmark per-iterasi, berkas pengujian gas, dan skrip analisis disimpan dan dapat direproduksi secara mandiri "
         "pada direktori repositori `assets/benchmark/` (mencakup berkas CSV mentah `benchmark_paillier_raw.csv`, `benchmark_zk_raw.csv`, `benchmark_gas_raw.csv`, `benchmark_onchain_raw.csv`, dan ringkasan terstruktur `benchmark_summary.json`) "
-        "yang terikat pada repositori terbuka GitHub (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag `v1.0.0-benchmark`, commit `618a918` tertanggal 22 Oktober 2026)."
+        "yang terikat pada repositori terbuka GitHub (https://github.com/Dimas-es/donasi-blockchain-paillier-zkSnark, rilis tag `v1.0.0-benchmark`, commit `7abb436` tertanggal 22 Oktober 2026)."
     )
     
     add_h2("1. Profil Konsumsi Gas Kontrak Pintar pada EVM dan Rekonsiliasi Storage")
@@ -886,7 +888,7 @@ def build_manuscript():
     add_body_p(
         "Evaluasi waktu komputasi kriptografis dilakukan melalui pengujian berulang empiris terstandarisasi pada lingkungan pengujian referensi terdedikasi (Intel Core i5-8250U 1.60GHz, RAM 8 GB DDR4, Windows 11 Pro 64-bit). "
         "Untuk menegakkan integritas dan reliabilitas pelaporan statistik: "
-        "(1) **Standarisasi Beban Uji dan Pembangkitan Blinding:** Evaluasi menggunakan beban kerja representatif tetap (v = 5.000 dengan pagu = 50.000 untuk pengujian Groth16; serta v = 50.000 dan v = 75.000 untuk uji homomorfik Paillier) dengan faktor blinding acak (r ∈ Z*_n untuk Paillier dan s ∈ F_p untuk Poseidon) yang dibangkitkan segar via CSPRNG pada setiap iterasi. Pada Paillier 2048-bit, durasi enkripsi didominasi oleh eksponensiasi modular r^n mod n² (dimensi modulus n), bukan magnitudo skalar v, sedangkan jumlah konstrain R1CS Groth16 bersifat invarian terhadap nilai sinyal numerik; "
+        "(1) **Standarisasi Beban Uji dan Pembangkitan Blinding:** Evaluasi menggunakan beban kerja representatif terstandarisasi (v = 5.000 dengan pagu = 50.000 dan nilai blinding Poseidon s heksadesimal konstan untuk pengujian Groth16; serta v = 50.000 dan v = 75.000 untuk uji homomorfik Paillier). Pada Paillier, faktor blinding acak r ∈ Z*_n dibangkitkan segar via CSPRNG (crypto/rand) pada setiap iterasi enkripsi, dengan durasi komputasi yang didominasi oleh eksponensiasi modular r^n mod n² pada dimensi modulus n = 2048 bit (bukan magnitudo skalar v). Sedangkan pada Groth16, jumlah konstrain R1CS dan durasi pembuktian bersifat invarian secara struktural terhadap nilai skalar sinyal numerik; "
         "(2) **Spesifikasi Jenis Simpangan Baku:** Seluruh simpangan baku yang dilaporkan adalah **Sample Standard Deviation** (s, dihitung dengan koreksi Bessel ddof=1); "
         "(3) **Penyajian Metrik Robust (Median dan P95):** Tabel 4 menyajikan nilai **Median dan P95** di samping rata-rata parametrik (Mean ± s) guna mengantisipasi skewness data; dan "
         "(4) **Pemisahan Fase Cold-Start (Warm-Up):** Lonjakan inisialisasi awal (cold start) dipisahkan secara transparan dari kinerja kondisi stabil (steady-state)."
@@ -912,7 +914,7 @@ def build_manuscript():
     add_body_p(
         "Data pada Tabel 4 dan Gambar 7 memperlihatkan bahwa pada pembangkitan bukti ZK in-process, pengukuran iterasi pertama mencatatkan lonjakan cold-start sebesar 722,63 ms akibat inisialisasi WebAssembly dan kompilasi JIT runtime V8 Node.js. "
         "Setelah fase warm-up dilewati, performa steady-state (N=29) stabil pada rata-rata 194,58 ± 21,73 ms dengan **Median 189,39 ms** dan **P95 236,16 ms**. "
-        "Berdasarkan nilai median steady-state, latensi transaksi end-to-end terproyeksi turun menjadi ~240,6 ms (<0,25 detik, rincian: Paillier 19,2 ms + Groth16 prove 189,4 ms + verifikasi lokal 18,9 ms + automine tx 13,1 ms), "
+        "Berdasarkan nilai median steady-state, latensi transaksi end-to-end terproyeksi turun menjadi ~240,5 ms (<0,25 detik, rincian: Paillier 19,2 ms + Groth16 prove 189,4 ms + verifikasi lokal 18,9 ms + automine tx 13,1 ms), "
         "dan tetap di bawah 0,35 detik pada batas P95 (~312,2 ms). Berbeda dari latensi komputasi wall-clock, konsumsi gas pada EVM Hardhat bersifat deterministik secara arsitektural. "
         "Pengukuran ini dievaluasi pada lingkungan uji tunggal terdedikasi (Intel Core i5-8250U, RAM 8 GB, Windows 11), dan evaluasi multi-platform publik disarankan sebagai arah riset lanjutan."
     )
@@ -968,7 +970,7 @@ def build_manuscript():
     
     add_body_p(
         "Hasil evaluasi empiris menunjukkan bahwa verifikasi pairing Groth16 mandiri memerlukan 225.035 gas, sedangkan transaksi pencatatan donasi on-chain dengan muatan string desimal saat ini memerlukan 1.481.734 gas (959.465 gas untuk muatan biner dan 613.627 gas untuk muatan ringkas, dan terpangkas menjadi 382.632 gas melalui optimasi penyimpanan hash dan event log). "
-        "Agregasi homomorfik Paillier off-chain berlangsung sangat efisien dalam 0,013 milidetik (~79.100 operasi/detik), sementara komputasi pembuktian ZK in-process memerlukan 212,18 milidetik (median 189,56 ms, kondisi stabil 194,58 ms), menghasilkan latensi transaksi end-to-end in-process yang responsif sebesar ~240,6 ms (<0,25 detik pada kondisi stabil median). "
+        "Agregasi homomorfik Paillier off-chain berlangsung sangat efisien dalam 0,013 milidetik (~79.100 operasi/detik), sementara komputasi pembuktian ZK in-process memerlukan 212,18 milidetik (median 189,56 ms, kondisi stabil 194,58 ms), menghasilkan latensi transaksi end-to-end in-process yang responsif sebesar ~240,5 ms (<0,25 detik pada kondisi stabil median). "
         "Analisis profil latensi membuktikan bahwa komputasi kriptografi inti bukanlah bottleneck sistem; latensi multi-detik pada eksekusi eksternal semata-mata dipicu oleh overhead startup runtime Node.js (~1,94 detik), sehingga integrasi pustaka native menjadi rekomendasi kunci implementasi produksi. "
         "Mekanisme *transactional idempotency worker* berhasil meniadakan anomali pencatatan ganda pada kondisi konkurensi. "
         "Formulasi dan pengujian fungsi aljabar pembukaan publik (*opening verification*) (M, R) pada modul kriptografi membuktikan kelayakan verifikasi independen atas total saldo tanpa kustodian kunci privat, dengan evaluasi unit test yang menolak secara deterministik manipulasi saldo palsu, sementara integrasi persistensi faktor R pada pipeline basis data relasional dirumuskan sebagai agenda pengembangan lanjutan."
@@ -1001,10 +1003,10 @@ def build_manuscript():
         "Damle, S., Gujar, S., & Moti, M. H. (2021). FASTEN: Fair and secure distributed voting using smart contracts. *arXiv preprint arXiv:2102.10594*. https://doi.org/10.48550/arXiv.2102.10594",
         "Grassi, L., Khovratovich, D., Rechberger, C., Roy, A., & Schofnegger, M. (2021). Poseidon: A new hash function for zero-knowledge proof systems. *Proceedings of the 30th USENIX Security Symposium (USENIX Security 21)*, 519–535.",
         "Groth, J. (2016). On the size of pairing-based non-interactive arguments. *Advances in Cryptology – EUROCRYPT 2016*, LNCS 9666, 305–326. https://doi.org/10.1007/978-3-662-49896-5_11",
-        "Habib, M. A. N. (2025). Analyzing performance bottlenecks in zero-knowledge proof based rollups on Ethereum. *arXiv preprint arXiv:2503.22709*. https://doi.org/10.48550/arXiv.2503.22709",
+        "Habib, M. A. (2025). Analyzing performance bottlenecks in zero-knowledge proof based rollups on Ethereum. *arXiv preprint arXiv:2503.22709*. https://doi.org/10.48550/arXiv.2503.22709",
         "He, B., Feng, T., Fang, J., Liu, C., & Su, C. (2024). A secure and efficient charitable donation system based on Ethereum blockchain and searchable encryption. *IEEE Transactions on Consumer Electronics*, 70(1), 2977–2987. https://doi.org/10.1109/TCE.2023.3323356",
         "Lavin, R., Liu, X., Mohanty, H., de la Rocha, A. S., & Xu, M. (2024). A survey on the applications of zero-knowledge proofs. *arXiv preprint arXiv:2408.00243*. https://doi.org/10.48550/arXiv.2408.00243",
-        "Lee, J., Choi, H., Kim, J., & Oh, H. (2020). SAVER: SNARK-friendly, additively-homomorphic, and verifiable encryption with rerandomization. *Advances in Cryptology – PKC 2020*, LNCS 12111, 101–131. https://doi.org/10.1007/978-3-030-45388-6_4",
+        "Lee, J., Choi, H., Kim, J., & Oh, H. (2020). SAVER: SNARK-friendly, additively-homomorphic, and verifiable encryption with rerandomization. *Advances in Cryptology – PKC 2020*, LNCS 12111, 97–123. https://doi.org/10.1007/978-3-030-45388-6_4",
         "Li, M., Chen, Y., Zhu, L., Zhang, Z., Ni, J., & Conti, M. (2023). Astraea: Anonymous and secure auditing based on private smart contracts for donation systems. *IEEE Transactions on Dependable and Secure Computing*, 20(4), 3002–3018. https://doi.org/10.1109/TDSC.2022.3204287",
         "Morais, E., Koens, T., van Wijk, C., & Koren, A. (2020). A survey on zero knowledge range proofs and applications. *arXiv preprint arXiv:1907.06381*. https://doi.org/10.48550/arXiv.1907.06381",
         "Muñoz-Tapia, J. L., Bellés-Muñoz, M., Isabel, M., & Rubio, A. (2022). CIRCOM: A robust and scalable language for building complex zero-knowledge circuits. *TechRxiv*, preprint. https://doi.org/10.36227/techrxiv.19374986.v1",

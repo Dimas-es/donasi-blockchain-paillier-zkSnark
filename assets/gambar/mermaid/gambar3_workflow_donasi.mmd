@@ -8,14 +8,14 @@ sequenceDiagram
     participant DB as PostgreSQL
     participant SC as Smart Contract (EVM)
 
-    D->>UI: Input nominal donasi (v) dan secret salt (r)
+    D->>UI: Input nominal donasi (v)
     UI->>API: Request submit donasi (Header: Idempotency-Key)
-    API->>ZK: Hitung Poseidon(v, r) dan bukti rentang Groth16
-    ZK-->>API: Commitment C_zk dan ZK Proof (pi_a, pi_b, pi_c)
-    API->>P: Enkripsi nominal donasi: c = g^v * r^n mod n^2
+    API->>ZK: Pembangkitan secret salt (s), komitmen Poseidon(v, s), & bukti rentang Groth16
+    ZK-->>API: Komitmen C_zk dan ZK Proof (pi_a, pi_b, pi_c)
+    API->>P: Enkripsi nominal Paillier: c = g^v * r^n mod n^2 (r acak CSPRNG)
     P-->>API: Ciphertext Paillier (c)
     API->>DB: INSERT donasi status 'pending' (Atomik)
-    API->>SC: Transaksi recordDonation(campaignId, C_zk, Proof)
+    API->>SC: Transaksi recordDonation(campaignId, commitment, encryptedAmount, proof)
     Note over SC: Verifikasi on-chain via Groth16Verifier (alt_bn128)
     SC-->>API: Transaksi confirmed on-chain & Tx Hash
     API->>DB: UPDATE donasi status 'confirmed' & simpan Tx Hash

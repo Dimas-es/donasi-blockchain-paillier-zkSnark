@@ -9,6 +9,13 @@ async function runCircomTest() {
   const wasmPath = path.join(buildDir, "DonationProof_js", "DonationProof.wasm");
   const zkeyPath = path.join(buildDir, "DonationProof_final.zkey");
 
+  // Check that artifacts exist
+  const fs = require("fs");
+  if (!fs.existsSync(wasmPath) || !fs.existsSync(zkeyPath)) {
+    console.error("FAIL: Circom build artifacts (.wasm or .zkey) missing. Build circuits first.");
+    process.exit(1);
+  }
+
   const secret = 12345678901234567890n;
   const campaignMax = 50000n;
 
@@ -21,13 +28,14 @@ async function runCircomTest() {
       wasmPath,
       zkeyPath
     );
-    console.error("FAIL: Expected assertion error for amount = 0, but proof succeeded!");
+    console.error("FAIL: Expected assertion error for amount = 0, but proof generation unexpectedly succeeded!");
     process.exit(1);
   } catch (err) {
-    if (err.message && err.message.includes("Assert Failed")) {
+    if (err && err.message && err.message.includes("Assert Failed")) {
       console.log("PASS: Circom correctly threw 'Assert Failed' on GreaterThan constraint!");
     } else {
-      console.log(`PASS: Proof generation rejected as expected: ${err.message}`);
+      console.error(`FAIL: Expected 'Assert Failed', but got unexpected error: ${err ? err.message : err}`);
+      process.exit(1);
     }
   }
 
@@ -40,13 +48,14 @@ async function runCircomTest() {
       wasmPath,
       zkeyPath
     );
-    console.error("FAIL: Expected assertion error for amount > max, but proof succeeded!");
+    console.error("FAIL: Expected assertion error for amount > max, but proof generation unexpectedly succeeded!");
     process.exit(1);
   } catch (err) {
-    if (err.message && err.message.includes("Assert Failed")) {
+    if (err && err.message && err.message.includes("Assert Failed")) {
       console.log("PASS: Circom correctly threw 'Assert Failed' on LessEqThan constraint!");
     } else {
-      console.log(`PASS: Proof generation rejected as expected: ${err.message}`);
+      console.error(`FAIL: Expected 'Assert Failed', but got unexpected error: ${err ? err.message : err}`);
+      process.exit(1);
     }
   }
 
